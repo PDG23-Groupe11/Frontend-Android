@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="ch.heigvd.pdg_grocerypal.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="ch.heigvd.pdg_grocerypal.ListFragment"
+        android:label="Ma liste"
+        tools:layout="@layout/fragment_list" />
+    <fragment
+        android:id="@+id/recipesFragment"
+        android:name="ch.heigvd.pdg_grocerypal.RecipesFragment"
+        android:label="Recettes"
+        tools:layout="@layout/fragment_recipes" />
+    <fragment
+        android:id="@+id/profilFragment"
+        android:name="ch.heigvd.pdg_grocerypal.ProfilFragment"
+        android:label="Profil"
+        tools:layout="@layout/fragment_profil" />
+
+</navigation>
