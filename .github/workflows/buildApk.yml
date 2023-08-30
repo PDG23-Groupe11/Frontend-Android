@@ -109,6 +109,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      # Checks-out the repository. Because for reasons:tm: it's required
+      - uses: actions/checkout@v3
       # https://github.com/marketplace/actions/tag-release-on-push-action
       - name: Create the release on GitHub
         id: gh-release
