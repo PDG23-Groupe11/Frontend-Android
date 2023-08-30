@@ -1,6 +1,7 @@
 package ch.heigvd.pdg_grocerypal.list
 
 import android.graphics.Paint
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
+import androidx.fragment.app.FragmentManager
 
-class GroceryListAdapter(private val groceryList: List<GroceryItem>) :
+class GroceryListAdapter(private val groceryList: List<GroceryItem>, private val fragmentManager: FragmentManager) :
     RecyclerView.Adapter<GroceryListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,7 +26,7 @@ class GroceryListAdapter(private val groceryList: List<GroceryItem>) :
             .inflate(R.layout.item_grocery, parent, false)
         return ViewHolder(view)
     }
-    
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val groceryItem = groceryList[position]
         holder.itemDetails.text = "${groceryItem.quantity} ${groceryItem.unit} ${groceryItem.name}"
@@ -45,7 +47,12 @@ class GroceryListAdapter(private val groceryList: List<GroceryItem>) :
                 notifyDataSetChanged()
             }
         }
-    }
 
+
+        holder.itemView.setOnClickListener {
+            val bottomSheetListFragment = BottomSheetListFragment(groceryList, position, this@GroceryListAdapter)
+            bottomSheetListFragment.show(fragmentManager, bottomSheetListFragment.tag)
+        }
+    }
     override fun getItemCount() = groceryList.size
 }

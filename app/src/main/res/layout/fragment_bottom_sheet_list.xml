@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+        <View
+            android:id="@+id/topDivider"
+            android:layout_width="match_parent"
+            android:layout_marginTop="12dp"
+            android:layout_height="1dp"
+            android:background="@color/light_gray"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+        <TextView
+            android:id="@+id/ingredientName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"
+            android:text="Ingredient Name"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ingredientName"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/minusButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:textSize="28sp"
+                android:text="-" />
+
+            <EditText
+                android:id="@+id/quantityEditText"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:textSize="24sp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:text="1" />
+
+            <Button
+                android:id="@+id/plusButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:textSize="28sp"
+                android:text="+" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="22dp"
+            android:layout_below="@id/layout"
+            android:textAllCaps="false"
+            android:text="Enregistrer"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/midDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/light_gray"
+            android:layout_below="@id/saveButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <ImageView
+            android:id="@+id/deleteProductButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/midDivider"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_delete"
+            android:padding="8dp"
+            android:layout_marginTop="16dp"
+
+            android:contentDescription="delete icon"
+            app:itemIconTint="@color/orange"/>
+    </RelativeLayout>
+</layout>

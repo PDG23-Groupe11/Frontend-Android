@@ -31,10 +31,9 @@ class ListFragment : Fragment() {
             GroceryItem("Oeuf", "pcs", "6"),
             GroceryItem("Chocolat noir", "g", "200"),
             GroceryItem("Chocolat au lait", "g", "200"),
-
             )
 
-        adapter = GroceryListAdapter(groceryList)
+        adapter = GroceryListAdapter(groceryList, parentFragmentManager)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
