@@ -24,10 +24,12 @@ class GroceryListAdapter(private val groceryList: List<GroceryItem>) :
             .inflate(R.layout.item_grocery, parent, false)
         return ViewHolder(view)
     }
+    
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val groceryItem = groceryList[position]
         holder.itemDetails.text = "${groceryItem.quantity} ${groceryItem.unit} ${groceryItem.name}"
         holder.checkBox.isChecked = groceryItem.isPurchased
+
 
         if (groceryItem.isPurchased) {
             holder.itemDetails.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.gray))
@@ -39,6 +41,9 @@ class GroceryListAdapter(private val groceryList: List<GroceryItem>) :
 
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
             groceryItem.isPurchased = isChecked
+            holder.itemDetails.post {
+                notifyDataSetChanged()
+            }
         }
     }
 
