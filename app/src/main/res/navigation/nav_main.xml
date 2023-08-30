@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/listFragment"
-        android:name="ch.heigvd.pdg_grocerypal.ListFragment"
+        android:name="ch.heigvd.pdg_grocerypal.list.ListFragment"
         android:label="Ma liste"
         tools:layout="@layout/fragment_list" />
     <fragment
