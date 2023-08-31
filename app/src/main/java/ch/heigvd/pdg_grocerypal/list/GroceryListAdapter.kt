@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class GroceryListAdapter(private val groceryList: List<GroceryItem>, private val fragmentManager: FragmentManager) :
     RecyclerView.Adapter<GroceryListAdapter.ViewHolder>() {
@@ -41,6 +42,7 @@ class GroceryListAdapter(private val groceryList: List<GroceryItem>, private val
             holder.itemDetails.paintFlags = holder.itemDetails.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
         }
 
+
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
             groceryItem.isPurchased = isChecked
             holder.itemDetails.post {
@@ -48,8 +50,8 @@ class GroceryListAdapter(private val groceryList: List<GroceryItem>, private val
             }
         }
 
-
         holder.itemView.setOnClickListener {
+
             val bottomSheetListFragment = BottomSheetListFragment(groceryList, position, this@GroceryListAdapter)
             bottomSheetListFragment.show(fragmentManager, bottomSheetListFragment.tag)
         }

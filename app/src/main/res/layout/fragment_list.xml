@@ -28,6 +28,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <TextView
+            android:id="@+id/emptyListMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/dividerView"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="12dp"
+            android:text="Aucun produit dans votre liste"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
@@ -36,18 +47,39 @@
             app:layout_constraintTop_toBottomOf="@id/dividerView"
             tools:layout_editor_absoluteX="0dp" />
 
-        <Button
-            android:id="@+id/deletePurchasedButton"
-            android:layout_width="wrap_content"
+        <FrameLayout
+            android:elevation="16dp"
+            android:id="@+id/bottomArea"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Supprimer les produits achetés"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:background="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.494"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:elevation="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_gravity="bottom">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/white" />
+
+            <Button
+                android:id="@+id/deletePurchasedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Supprimer les produits achetés"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+            </LinearLayout>
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

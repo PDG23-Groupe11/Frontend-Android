@@ -18,6 +18,18 @@ class ListFragment : Fragment() {
     private lateinit var groceryList: MutableList<GroceryItem>
     private lateinit var adapter: GroceryListAdapter
 
+    private fun updateEmptyListMessageVisibility() {
+        val emptyListMessage = binding.emptyListMessage
+
+        if (groceryList.isEmpty()) {
+            emptyListMessage.visibility = View.VISIBLE
+            binding.recyclerView.visibility = View.GONE
+        } else {
+            emptyListMessage.visibility = View.GONE
+            binding.recyclerView.visibility = View.VISIBLE
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +49,7 @@ class ListFragment : Fragment() {
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
+        updateEmptyListMessageVisibility()
         return view
     }
 
@@ -51,6 +64,7 @@ class ListFragment : Fragment() {
                     iterator.remove()
                 }
             }
+            updateEmptyListMessageVisibility()
             view.post {
                 adapter.notifyDataSetChanged()
             }
