@@ -15,4 +15,7 @@
     <string name="cartImageName">cartImage</string>
     <string name="catchPhrase">Et la gestion des commissions devient facile !</string>
     <string name="titleshapeholder">titleShapeholder</string>
+    <string name="recetteselect_titre">Recettes séléctionnées</string>
+    <string name="recettes">Recettes</string>
+    <string name="tout_afficher">Tout afficher</string>
 </resources>
