@@ -14,7 +14,6 @@ class RecipesFragment : Fragment() {
 
     private lateinit var binding: FragmentRecipesBinding
     private lateinit var recipeList1: List<RecipeCard>
-    private lateinit var recipeList3items: List<RecipeCard>
     private lateinit var adapter1: RecipeAdapter1
     private lateinit var adapter2: RecipeAdapter2
 
@@ -37,19 +36,12 @@ class RecipesFragment : Fragment() {
             // Add more recipe cards here
         )
 
-        recipeList3items = listOf(
-            RecipeCard(R.drawable.crepes_image, "Crêpes", "30 min"),
-            RecipeCard(R.drawable.lasagne_image, "Lasagnes", "90 min"),
-            RecipeCard(R.drawable.burger_image1, "Burger", "30 min")
-            // Add more recipe cards here
-        )
-
         adapter1 = RecipeAdapter1(recipeList1)
         binding.recyclerView1.adapter = adapter1
-        binding.recyclerView1.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-        adapter2 = RecipeAdapter2(recipeList3items)
+        binding.recyclerView1.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        adapter2 = RecipeAdapter2(recipeList1)
         binding.recyclerView2.adapter = adapter2
-        binding.recyclerView2.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        binding.recyclerView2.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
         return view
     }
