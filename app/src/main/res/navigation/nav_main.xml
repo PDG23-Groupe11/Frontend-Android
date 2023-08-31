@@ -17,7 +17,7 @@
         tools:layout="@layout/fragment_list" />
     <fragment
         android:id="@+id/recipesFragment"
-        android:name="ch.heigvd.pdg_grocerypal.RecipesFragment"
+        android:name="ch.heigvd.pdg_grocerypal.recipes.RecipesFragment"
         android:label="Recettes"
         tools:layout="@layout/fragment_recipes" />
     <fragment
