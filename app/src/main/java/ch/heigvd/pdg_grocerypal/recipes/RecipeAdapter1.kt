@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
 
@@ -16,6 +18,7 @@ class RecipeAdapter1(private val recipeList: List<RecipeCard>) :
         val recipeImageView : ImageView = itemView.findViewById(R.id.itemImage)
         val recipeNameTv : TextView = itemView.findViewById(R.id.itemTitle)
         val recipeDurationTv : TextView = itemView.findViewById(R.id.itemDuration)
+        val clickableOverlay : CardView = itemView.findViewById(R.id.cardView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
@@ -32,29 +35,11 @@ class RecipeAdapter1(private val recipeList: List<RecipeCard>) :
         holder.recipeImageView.setImageResource(recipe.recipeImage)
         holder.recipeNameTv.text = recipe.recipeName
         holder.recipeDurationTv.text = recipe.recipeDuration
+        // Set up click listener for the clickableOverlay view
+        holder.clickableOverlay.setOnClickListener {
+            // Handle button activation here
+            // For example, you can show a Toast message
+            Toast.makeText(holder.itemView.context, "Button Activated", Toast.LENGTH_SHORT).show()
+        }
     }
-
 }
-//    RecyclerView.Adapter<YourAdapterName.RecipeViewHolder>() {
-//
-//    class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
-//        val view = LayoutInflater.from(parent.context)
-//            .inflate(R.layout.item_horizontal, parent, false)
-//        return RecipeViewHolder(view)
-//    }
-//
-//    override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-//        val recipe = recipeList[position]
-//
-//        // Bind data to the view holder's views
-//        holder.itemView.itemImage.setImageResource(recipe.recipeImage)
-//        holder.itemView.itemTitle.text = recipe.recipeName
-//        holder.itemView.itemDuration.text = recipe.recipeDuration
-//    }
-//
-//    override fun getItemCount(): Int {
-//        return recipeList.size
-//    }
-//}

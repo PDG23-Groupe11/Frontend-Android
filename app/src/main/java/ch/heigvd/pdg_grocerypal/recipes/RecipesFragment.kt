@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.databinding.FragmentRecipesBinding
 
@@ -32,8 +31,6 @@ class RecipesFragment : Fragment() {
             RecipeCard(R.drawable.burger_image2, "Burger", "30 min"),
             RecipeCard(R.drawable.burger_image3, "Burger", "30 min"),
             RecipeCard(R.drawable.burger_image4, "Burger", "30 min")
-
-            // Add more recipe cards here
         )
 
         adapter1 = RecipeAdapter1(recipeList1)
