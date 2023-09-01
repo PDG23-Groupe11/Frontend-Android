@@ -13,8 +13,8 @@ class RecipesFragment : Fragment() {
 
     private lateinit var binding: FragmentRecipesBinding
     private lateinit var recipeList1: List<RecipeCard>
-    private lateinit var adapter1: RecipeAdapter1
-    private lateinit var adapter2: RecipeAdapter2
+    private lateinit var adapter1: RecipeAdapterHorizontal
+    private lateinit var adapter2: RecipeAdapterVertical
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,7 +23,7 @@ class RecipesFragment : Fragment() {
         binding = FragmentRecipesBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        recipeList1 = listOf(
+        recipeList1 = mutableListOf(
             RecipeCard(R.drawable.crepes_image, "Crêpes", "30 min"),
             RecipeCard(R.drawable.crepes_image2, "Crêpes", "30 min"),
             RecipeCard(R.drawable.lasagne_image, "Lasagnes", "90 min"),
@@ -33,10 +33,10 @@ class RecipesFragment : Fragment() {
             RecipeCard(R.drawable.burger_image4, "Burger", "30 min")
         )
 
-        adapter1 = RecipeAdapter1(recipeList1)
+        adapter1 = RecipeAdapterHorizontal(recipeList1)
         binding.recyclerView1.adapter = adapter1
         binding.recyclerView1.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        adapter2 = RecipeAdapter2(recipeList1)
+        adapter2 = RecipeAdapterVertical(recipeList1)
         binding.recyclerView2.adapter = adapter2
         binding.recyclerView2.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
