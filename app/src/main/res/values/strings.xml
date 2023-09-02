@@ -18,6 +18,7 @@
     <string name="recetteselect_titre">Recettes séléctionnées</string>
     <string name="recettes">Recettes</string>
     <string name="tout_afficher">Tout afficher</string>
+    <string name="ajouter_ma_liste">Ajouter à ma liste</string>
     <string name="modifier">Modifier</string>
     <string name="ma_liste">Ma liste de course</string>
 </resources>

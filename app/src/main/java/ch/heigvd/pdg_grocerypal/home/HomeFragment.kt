@@ -12,7 +12,7 @@ import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.databinding.FragmentHomeBinding
 import ch.heigvd.pdg_grocerypal.list.ListFragment
-import ch.heigvd.pdg_grocerypal.recipes.RecipeAdapter2
+import ch.heigvd.pdg_grocerypal.recipes.RecipeAdapterVertical
 import ch.heigvd.pdg_grocerypal.recipes.RecipeCard
 import android.os.Handler
 
@@ -23,7 +23,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var groceryList: MutableList<GroceryItem>
     private lateinit var recipeList1: List<RecipeCard>
-    private lateinit var adapter1: RecipeAdapter2
+    private lateinit var adapter1: RecipeAdapterVertical
     private lateinit var adapter2: LittleListAdapter
 
     override fun onCreateView(
@@ -34,12 +34,6 @@ class HomeFragment : Fragment() {
         val view = binding.root
 
 
-        recipeList1 = listOf(
-            RecipeCard(R.drawable.crepes_image, "Crêpes", "30 min"),
-            RecipeCard(R.drawable.lasagne_image, "Lasagnes", "90 min"),
-            RecipeCard(R.drawable.burger_image1, "Burger", "30 min")
-        )
-
         groceryList = mutableListOf(
             GroceryItem("Farine", "g", "100"),
             GroceryItem("Lait", "l", "4"),
@@ -48,8 +42,16 @@ class HomeFragment : Fragment() {
             GroceryItem("Chocolat au lait", "g", "200"),
         )
 
+        recipeList1 = listOf(
+            RecipeCard(R.drawable.crepes_image, "Crêpes", "30 min", groceryList),
+            RecipeCard(R.drawable.lasagne_image, "Lasagnes", "90 min", groceryList),
+            RecipeCard(R.drawable.burger_image1, "Burger", "30 min", groceryList)
+        )
 
-        adapter1 = RecipeAdapter2(recipeList1)
+
+
+
+        adapter1 = RecipeAdapterVertical(recipeList1)
         binding.recyclerView1.adapter = adapter1
         binding.recyclerView1.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

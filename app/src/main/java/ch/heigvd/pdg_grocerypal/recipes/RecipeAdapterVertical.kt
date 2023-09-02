@@ -1,18 +1,20 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
+import ch.heigvd.pdg_grocerypal.list.BottomSheetListFragment
 
 
-class RecipeAdapter2(private val recipeList: List<RecipeCard>) :
-    RecyclerView.Adapter<RecipeAdapter2.RecipeViewHolder>(){
+class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
+    RecyclerView.Adapter<RecipeAdapterVertical.RecipeViewHolder>(){
 
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val recipeImageView : ImageView = itemView.findViewById(R.id.itemImage)
@@ -33,12 +35,15 @@ class RecipeAdapter2(private val recipeList: List<RecipeCard>) :
         holder.recipeDurationTv.text = recipe.recipeDuration
         // Set up click listener for the clickableOverlay view
         holder.clickableOverlay.setOnClickListener {
-            // Handle button activation here
-            // For example, you can show a Toast message
-            Toast.makeText(holder.itemView.context, "Button Activated", Toast.LENGTH_SHORT).show()
+            val recipe = recipeList[position]
+
+            val recipeDetailsFragment = RecipeDetailsFragment.newInstance(recipe)
+
+            // Get the Navigation Controller from the activity and navigate to the fragment
+            val navController = Navigation.findNavController(holder.itemView)
+            navController.navigate(R.id.openRecipeDetails, recipeDetailsFragment.arguments)
         }
     }
-
 
     override fun getItemCount(): Int {
         return recipeList.size
