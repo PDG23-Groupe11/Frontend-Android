@@ -1,5 +1,6 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -14,11 +15,11 @@ import ch.heigvd.pdg_grocerypal.ui.login.LoginActivity
 
 
 
-class RecipeAdapterIngredients(private val groceryList: List<GroceryItem>) :
+class RecipeAdapterIngredients(private val groceryList: List<GroceryItem>, private var currentQuantity: Int) :
     RecyclerView.Adapter<RecipeAdapterIngredients.RecipeViewHolder>(){
 
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val ingredientNameTv : TextView = itemView.findViewById(R.id.itemDetails)
+        val ingredientDetailsTv : TextView = itemView.findViewById(R.id.itemDetails)
      }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
@@ -28,12 +29,17 @@ class RecipeAdapterIngredients(private val groceryList: List<GroceryItem>) :
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val groceryItem = groceryList[position]
-        holder.ingredientNameTv.text = groceryItem.name
+        val totalQuantity = (groceryItem.quantity.toIntOrNull() ?: 0) * currentQuantity
+        holder.ingredientDetailsTv.text = "$totalQuantity ${groceryItem.unit} ${groceryItem.name}"
     }
 
 
     override fun getItemCount(): Int {
         return groceryList.size
+    }
+
+    fun updateCurrentQuantity(newQuantity: Int) {
+        currentQuantity = newQuantity
     }
 
 }

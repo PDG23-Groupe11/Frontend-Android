@@ -12,11 +12,11 @@ import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.databinding.FragmentDetailRecipeBinding
 
-class RecipeDetailsFragment : Fragment() {
+class RecipeDetailsFragment() : Fragment() {
 
     private lateinit var binding: FragmentDetailRecipeBinding
-    private lateinit var groceryList: MutableList<GroceryItem>
     private lateinit var adapter: RecipeAdapterIngredients
+    private var currentQuantity = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +28,9 @@ class RecipeDetailsFragment : Fragment() {
         // Retrieve the recipe argument from the fragment's arguments
         val recipe = arguments?.getParcelable<RecipeCard>("recipe")
 
+        // Initialize the groceryList by getting it from the recipe if not null
+        val groceryList = recipe?.groceryList ?: emptyList()
+
         // Now, you can set the values to your views if the recipe is not null
         recipe?.let {
             // Set the recipeImage, recipeName, and recipeDuration values here
@@ -36,17 +39,29 @@ class RecipeDetailsFragment : Fragment() {
             binding.itemDuration.text = it.recipeDuration
         }
 
-        groceryList = mutableListOf(
-            GroceryItem("Farine", "g", "100"),
-            GroceryItem("Lait", "l", "4"),
-            GroceryItem("Oeuf", "pcs", "6"),
-            GroceryItem("Chocolat noir", "g", "200"),
-            GroceryItem("Chocolat au lait", "g", "200")
-        )
+        binding.MinusButtonRecipe.setOnClickListener {
+            if (currentQuantity > 1) {
+                currentQuantity--
+                binding.quantityEditText.setText(currentQuantity.toString())
+                // Update the currentQuantity value and notify the adapter of the change
+                adapter.updateCurrentQuantity(currentQuantity)
+                adapter.notifyDataSetChanged()
+            }
+        }
 
-        adapter = RecipeAdapterIngredients(groceryList)
+        binding.PlusbuttonRecipe.setOnClickListener {
+            currentQuantity++
+            binding.quantityEditText.setText(currentQuantity.toString())
+            // Update the currentQuantity value and notify the adapter of the change
+            adapter.updateCurrentQuantity(currentQuantity )
+            adapter.notifyDataSetChanged()
+        }
+
+        adapter = RecipeAdapterIngredients(groceryList, currentQuantity)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        // TODO lier a la quantité profil
+        binding.quantityEditText.setText("1")
 
         val returnButton = view.findViewById<ImageView>(R.id.blackArrowReturn)
 
