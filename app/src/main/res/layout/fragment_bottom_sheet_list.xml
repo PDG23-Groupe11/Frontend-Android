@@ -47,7 +47,7 @@
                 android:layout_height="100dp"
                 android:textSize="48sp"
                 android:textStyle="bold"
-                android:text="-" />
+                android:text="@string/minus" />
 
             <EditText
                 android:id="@+id/quantityEditText"
@@ -58,7 +58,7 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="center"
                 android:inputType="number"
-                android:text="1" />
+                android:text="@string/default_value"/>
 
             <Button
                 android:id="@+id/plusButton"
@@ -66,7 +66,7 @@
                 android:layout_height="100dp"
                 android:textSize="48sp"
                 android:textStyle="bold"
-                android:text="+" />
+                android:text="@string/more" />
 
         </LinearLayout>
 
@@ -78,7 +78,7 @@
             android:layout_marginTop="32dp"
             android:layout_below="@id/layout"
             android:textAllCaps="false"
-            android:text="Enregistrer"
+            android:text="@string/save"
             android:textSize="28sp" />
 
         <View
@@ -101,8 +101,7 @@
             android:src="@drawable/ic_delete"
             android:padding="8dp"
             android:layout_marginTop="16dp"
-
-            android:contentDescription="delete icon"
+            android:contentDescription="@string/delete"
             app:itemIconTint="@color/orange"/>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

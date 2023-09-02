@@ -25,9 +25,14 @@
     <string name="deco">Déconnexion</string>
     <string name="regime">Régimes alimentaires et allergies</string>
     <string name="preference">Préférences</string>
-    <string name="defaultPersonne">Nombre de personne par défaut pour les recettes</string>
-
-
+    <string name="default_personne">Nombre de personne par défaut pour les recettes</string>
+    <string name="minus">-</string>
+    <string name="more">+</string>
+    <string name="save">Enregistrer</string>
+    <string name="delete">Supprimer</string>
+    <string name="default_value">1</string>
+    <string name="empty_list">Aucun produit dans votre liste</string>
+    <string name="delete_produce">Supprimer les produits achetés</string>
 
 
 </resources>
