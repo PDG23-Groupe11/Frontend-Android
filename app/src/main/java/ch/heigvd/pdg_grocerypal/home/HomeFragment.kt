@@ -49,8 +49,6 @@ class HomeFragment : Fragment() {
         )
 
 
-
-
         adapter1 = RecipeAdapterVertical(recipeList1)
         binding.recyclerView1.adapter = adapter1
         binding.recyclerView1.layoutManager =
