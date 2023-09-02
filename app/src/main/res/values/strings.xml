@@ -21,4 +21,13 @@
     <string name="ajouter_ma_liste">Ajouter à ma liste</string>
     <string name="modifier">Modifier</string>
     <string name="ma_liste">Ma liste de course</string>
+    <string name="profil">Profil</string>
+    <string name="deco">Déconnexion</string>
+    <string name="regime">Régimes alimentaires et allergies</string>
+    <string name="preference">Préférences</string>
+    <string name="defaultPersonne">Nombre de personne par défaut pour les recettes</string>
+
+
+
+
 </resources>
