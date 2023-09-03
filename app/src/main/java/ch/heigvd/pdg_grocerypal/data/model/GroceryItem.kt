@@ -2,7 +2,6 @@ package ch.heigvd.pdg_grocerypal.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import ch.heigvd.pdg_grocerypal.recipes.RecipeCard
 
 data class GroceryItem(
     val name: String,

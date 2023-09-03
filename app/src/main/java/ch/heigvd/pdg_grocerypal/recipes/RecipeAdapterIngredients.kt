@@ -1,18 +1,12 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
-import ch.heigvd.pdg_grocerypal.ui.login.LoginActivity
-
 
 
 class RecipeAdapterIngredients(private val groceryList: List<GroceryItem>, private var currentQuantity: Int) :

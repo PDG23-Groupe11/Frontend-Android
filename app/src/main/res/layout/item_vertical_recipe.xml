@@ -30,7 +30,7 @@
                 android:clipToOutline="true"
                 android:contentDescription="imageHolder"
                 android:scaleType="centerCrop"
-                android:src="@drawable/crepes_image"
+                android:src="@drawable/image_placeholder"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
