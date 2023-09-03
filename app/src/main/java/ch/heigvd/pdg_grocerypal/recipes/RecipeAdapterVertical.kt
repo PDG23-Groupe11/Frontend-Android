@@ -1,6 +1,5 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
-import ch.heigvd.pdg_grocerypal.list.BottomSheetListFragment
 
 
 class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
@@ -24,7 +22,7 @@ class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_vercital_recipe, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_vertical_recipe, parent, false)
         return  RecipeViewHolder(view)
     }
 

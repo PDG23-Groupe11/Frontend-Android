@@ -33,6 +33,5 @@
     <string name="default_value">1</string>
     <string name="empty_list">Aucun produit dans votre liste</string>
     <string name="delete_produce">Supprimer les produits achetés</string>
-
-
+    <string name="minustext">-</string>
 </resources>

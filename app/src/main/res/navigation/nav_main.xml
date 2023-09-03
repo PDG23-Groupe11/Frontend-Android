@@ -9,7 +9,14 @@
         android:id="@+id/homeFragment"
         android:name="ch.heigvd.pdg_grocerypal.home.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/openRecipeDetails"
+            app:destination="@id/recipeDetailsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_recipesFragment"
+            app:destination="@id/recipesFragment" />
+    </fragment>
     <fragment
         android:id="@+id/listFragment"
         android:name="ch.heigvd.pdg_grocerypal.list.ListFragment"
@@ -22,7 +29,7 @@
         tools:layout="@layout/fragment_recipes" >
         <action
             android:id="@+id/openRecipeDetails"
-            app:destination="@id/recioeDetailsFragment" />
+            app:destination="@id/recipeDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/profilFragment"
@@ -30,7 +37,7 @@
         android:label="Profil"
         tools:layout="@layout/fragment_profil" />
     <fragment
-        android:id="@+id/recioeDetailsFragment"
+        android:id="@+id/recipeDetailsFragment"
         android:name="ch.heigvd.pdg_grocerypal.recipes.RecipeDetailsFragment"
         android:label="DetailsRecette"
         tools:layout="@layout/fragment_detail_recipe" >
