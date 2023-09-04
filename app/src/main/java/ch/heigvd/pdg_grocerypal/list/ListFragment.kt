@@ -40,7 +40,6 @@ class ListFragment : Fragment() {
 
         val dbHelper = GroceryPalDBHelper(requireContext())
         groceryList = dbHelper.getAllShoppingListItems()
-        updateGroceryList(dbHelper.getAllShoppingListItems())
 
         updateEmptyListMessageVisibility()
         return view

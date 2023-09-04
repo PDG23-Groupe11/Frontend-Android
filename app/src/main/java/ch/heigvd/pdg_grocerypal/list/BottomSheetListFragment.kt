@@ -43,7 +43,7 @@ class BottomSheetListFragment(private val groceryList: MutableList<GroceryItem>,
             val dbHelper = GroceryPalDBHelper(requireContext())
             dbHelper.updateQuantityInShoppingList(groceryList[position].ingredientId, newQuantity)
             updateGroceryList(dbHelper.getAllShoppingListItems())
-            adapter.notifyDataSetChanged()
+            adapter.notifyItemChanged(position)
             dismiss()
         }
 
@@ -51,7 +51,7 @@ class BottomSheetListFragment(private val groceryList: MutableList<GroceryItem>,
             val dbHelper = GroceryPalDBHelper(requireContext())
             dbHelper.deletePurchasedItem(groceryList[position].ingredientId)
             updateGroceryList(dbHelper.getAllShoppingListItems())
-            adapter.notifyDataSetChanged()
+            adapter.notifyItemRemoved(position)
             dismiss()
         }
 
