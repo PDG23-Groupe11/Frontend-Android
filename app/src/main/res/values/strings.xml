@@ -15,4 +15,23 @@
     <string name="cartImageName">cartImage</string>
     <string name="catchPhrase">Et la gestion des commissions devient facile !</string>
     <string name="titleshapeholder">titleShapeholder</string>
+    <string name="recetteselect_titre">Recettes séléctionnées</string>
+    <string name="recettes">Recettes</string>
+    <string name="tout_afficher">Tout afficher</string>
+    <string name="ajouter_ma_liste">Ajouter à ma liste</string>
+    <string name="modifier">Modifier</string>
+    <string name="ma_liste">Ma liste de course</string>
+    <string name="profil">Profil</string>
+    <string name="deco">Déconnexion</string>
+    <string name="regime">Régimes alimentaires et allergies</string>
+    <string name="preference">Préférences</string>
+    <string name="default_personne">Nombre de personne par défaut pour les recettes</string>
+    <string name="minus">-</string>
+    <string name="more">+</string>
+    <string name="save">Enregistrer</string>
+    <string name="delete">Supprimer</string>
+    <string name="default_value">1</string>
+    <string name="empty_list">Aucun produit dans votre liste</string>
+    <string name="delete_produce">Supprimer les produits achetés</string>
+    <string name="minustext">-</string>
 </resources>
