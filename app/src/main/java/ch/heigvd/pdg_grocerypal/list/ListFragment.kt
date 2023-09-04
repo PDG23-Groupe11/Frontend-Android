@@ -27,7 +27,10 @@ class ListFragment : Fragment() {
             binding.recyclerView.visibility = View.VISIBLE
         }
     }
-
+    fun updateGroceryList(newGroceryList: MutableList<GroceryItem>) {
+        groceryList.clear()
+        groceryList.addAll(newGroceryList)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,10 +40,7 @@ class ListFragment : Fragment() {
 
         val dbHelper = GroceryPalDBHelper(requireContext())
         groceryList = dbHelper.getAllShoppingListItems()
-
-        adapter = GroceryListAdapter(groceryList, parentFragmentManager)
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        updateGroceryList(dbHelper.getAllShoppingListItems())
 
         updateEmptyListMessageVisibility()
         return view
@@ -49,15 +49,15 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        adapter = GroceryListAdapter(requireContext(), groceryList, parentFragmentManager)
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+
+
         binding.deletePurchasedButton.setOnClickListener {
-            val iterator = groceryList.iterator()
-            while (iterator.hasNext()) {
-                val item = iterator.next()
-                if (item.isPurchased) {
-                    iterator.remove()
-                }
-            }
-            updateEmptyListMessageVisibility()
+            val dbHelper = GroceryPalDBHelper(requireContext())
+            dbHelper.deleteAllPurchasedItems()
+            updateGroceryList(dbHelper.getAllShoppingListItems())
             view.post {
                 adapter.notifyDataSetChanged()
             }
