@@ -61,7 +61,8 @@ class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
 
 
             val navController = Navigation.findNavController(holder.itemView)
-            navController.navigate(R.id.openRecipeDetails, args)
+            navController.popBackStack()
+            navController.navigate(R.id.recipeDetailsFragment, args)
         }
     }
 }
