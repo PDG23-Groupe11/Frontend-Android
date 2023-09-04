@@ -36,7 +36,7 @@ class BottomSheetListFragment(private val groceryList: List<GroceryItem>, privat
         }
 
         binding.saveButton.setOnClickListener {
-            val newQuantity = binding.quantityEditText.text.toString()
+            val newQuantity = binding.quantityEditText.text.toString().toIntOrNull() ?: 0
             groceryList[position].quantity = newQuantity
             adapter.notifyDataSetChanged()
             dismiss()
