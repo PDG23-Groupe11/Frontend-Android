@@ -31,6 +31,6 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        TODO("Not yet implemented")
+        TODO("Not useful in our case")
     }
 }
