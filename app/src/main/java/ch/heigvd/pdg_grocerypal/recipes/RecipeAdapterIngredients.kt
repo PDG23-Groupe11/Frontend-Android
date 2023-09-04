@@ -23,7 +23,7 @@ class RecipeAdapterIngredients(private val groceryList: List<GroceryItem>, priva
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val groceryItem = groceryList[position]
-        val totalQuantity = (groceryItem.quantity.toIntOrNull() ?: 0) * currentQuantity
+        val totalQuantity = groceryItem.quantity * currentQuantity
         holder.ingredientDetailsTv.text = "$totalQuantity ${groceryItem.unit} ${groceryItem.name}"
     }
 

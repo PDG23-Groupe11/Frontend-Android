@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.heigvd.pdg_grocerypal.R
+import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.databinding.FragmentRecipesBinding
 
@@ -27,13 +28,8 @@ class RecipesFragment : Fragment() {
         binding = FragmentRecipesBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        groceryList = mutableListOf(
-            GroceryItem("Farine", "g", "100"),
-            GroceryItem("Lait", "l", "4"),
-            GroceryItem("Oeuf", "pcs", "6"),
-            GroceryItem("Chocolat noir", "g", "200"),
-            GroceryItem("Chocolat au lait", "g", "200")
-        )
+        val dbHelper = GroceryPalDBHelper(requireContext())
+        groceryList = dbHelper.getAllShoppingListItems()
 
         val recipePreparationText = """
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 

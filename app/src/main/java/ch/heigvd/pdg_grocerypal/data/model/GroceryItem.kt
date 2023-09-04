@@ -4,9 +4,10 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class GroceryItem(
+    val ingredientId: Int,
     val name: String,
     val unit: String,
-    var quantity: String,
+    var quantity: Int,
     var isPurchased: Boolean = false
 ) : Parcelable {
 
@@ -19,7 +20,7 @@ data class GroceryItem(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeString(unit)
-        parcel.writeString(quantity)
+        parcel.writeInt(quantity)
         parcel.writeByte(if (isPurchased) 1 else 0) // 1 if true, 0 if false
     }
 
@@ -48,9 +49,10 @@ data class GroceryItem(
 
     // Constructor for reading from a Parcel
     constructor(parcel: Parcel) : this(
+        ingredientId = parcel.readInt(),
         name = parcel.readString() ?: "",
         unit = parcel.readString() ?: "",
-        quantity = parcel.readString() ?: "",
+        quantity = parcel.readInt(),
         isPurchased = parcel.readByte() != 0.toByte() // Convert 0/1 to Boolean
     )
 }
