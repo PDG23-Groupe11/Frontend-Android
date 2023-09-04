@@ -33,6 +33,15 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        val recipePreparationText = """
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
+            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt 
+            mollit anim id est laborum.
+        """.trimIndent()
+
 
         groceryList = mutableListOf(
             GroceryItem("Farine", "g", "100"),
@@ -42,10 +51,10 @@ class HomeFragment : Fragment() {
             GroceryItem("Chocolat au lait", "g", "200"),
         )
 
-        recipeList1 = listOf(
-            RecipeCard(R.drawable.crepes_image, "Crêpes", "30 min", groceryList),
-            RecipeCard(R.drawable.lasagne_image, "Lasagnes", "90 min", groceryList),
-            RecipeCard(R.drawable.burger_image1, "Burger", "30 min", groceryList)
+        recipeList1 = mutableListOf(
+                RecipeCard(1, "Crêpes", 2,"30 min", recipePreparationText),
+                RecipeCard(2, "Lasagnes", 4,"60 min", recipePreparationText),
+                RecipeCard(3, "Burger", 1,"30 min", recipePreparationText)
         )
 
 

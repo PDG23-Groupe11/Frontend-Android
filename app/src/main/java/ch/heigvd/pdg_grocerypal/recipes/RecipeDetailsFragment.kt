@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.databinding.FragmentDetailRecipeBinding
 import androidx.navigation.fragment.findNavController
+import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.data.model.NutritionalValue
 import ch.heigvd.pdg_grocerypal.data.model.NutritionalValueType
 import ch.heigvd.pdg_grocerypal.data.model.NutritionalValues
@@ -21,6 +22,7 @@ class RecipeDetailsFragment() : Fragment() {
 
     private lateinit var binding: FragmentDetailRecipeBinding
     private lateinit var adapter: RecipeAdapterIngredients
+    private lateinit var groceryList: MutableList<GroceryItem>
     private var currentQuantity = 1
 
     override fun onCreateView(
@@ -30,18 +32,20 @@ class RecipeDetailsFragment() : Fragment() {
         binding = FragmentDetailRecipeBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        // Retrieve the recipe argument from the fragment's arguments
         val recipe = arguments?.getParcelable<RecipeCard>("recipe")
 
-        // Initialize the groceryList by getting it from the recipe if not null
-        val groceryList = recipe?.groceryList ?: emptyList()
+        val groceryList = arguments?.getParcelableArrayList<GroceryItem>("groceryList") ?: mutableListOf()
+
+        val imagePlaceholderResId = arguments?.getInt("imagePlaceholder") ?: R.drawable.image_placeholder
+
+        binding.recipeImage.setImageResource(imagePlaceholderResId)
+
 
         // Now, you can set the values to your views if the recipe is not null
         recipe?.let {
-            // Set the recipeImage, recipeName, and recipeDuration values here
-            binding.recipeImage.setImageResource(it.recipeImage)
             binding.recipeTitle.text = it.recipeName
             binding.itemDuration.text = it.recipeDuration
+            binding.recipePreparationText.text = it.instruction
         }
 
         binding.MinusButtonRecipe.setOnClickListener {
@@ -71,18 +75,10 @@ class RecipeDetailsFragment() : Fragment() {
         // Add an EditText for recipe preparation text
         val recipePreparationField = view.findViewById<TextView>(R.id.recipePreparationText)
 
-        // Your recipe preparation text
-        val recipePreparationText = """
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
-            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt 
-            mollit anim id est laborum.
-        """.trimIndent()
 
-        // Set the text in the EditText
-        recipePreparationField.setText(recipePreparationText)
+
+//        // Set the text in the EditText
+//        recipePreparationField.setText(recipePreparationText)
 
         val nutritionalValues = NutritionalValues(
             fiber = NutritionalValue(NutritionalValueType.FIBER, "g", "5"),
@@ -121,14 +117,5 @@ class RecipeDetailsFragment() : Fragment() {
     private fun appendNutritionalValue(value: NutritionalValue, builder: StringBuilder) {
         val formattedValue = "${value.type.displayName} : ${value.quantity} ${value.unit}\n"
         builder.append(formattedValue)
-    }
-    companion object {
-        fun newInstance(recipe: RecipeCard): RecipeDetailsFragment {
-            val fragment = RecipeDetailsFragment()
-            val args = Bundle()
-            args.putParcelable("recipe", recipe)
-            fragment.arguments = args
-            return fragment
-        }
     }
 }

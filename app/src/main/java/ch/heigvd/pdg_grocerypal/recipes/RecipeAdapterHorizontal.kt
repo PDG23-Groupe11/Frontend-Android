@@ -1,6 +1,7 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
+import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 
 
 class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
@@ -33,17 +35,33 @@ class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipeList[position]
-        holder.recipeImageView.setImageResource(recipe.recipeImage)
+
+        val groceryList = mutableListOf(
+                GroceryItem("Farine", "g", "100"),
+                GroceryItem("Lait", "l", "4"),
+                GroceryItem("Oeuf", "pcs", "6"),
+                GroceryItem("Chocolat noir", "g", "200"),
+                GroceryItem("Chocolat au lait", "g", "200")
+        )
+
+        holder.recipeImageView.setImageResource(R.drawable.image_placeholder)
         holder.recipeNameTv.text = recipe.recipeName
         holder.recipeDurationTv.text = recipe.recipeDuration
-        // Set up click listener for the clickableOverlay view
+
+        val args = Bundle().apply {
+            putParcelable("recipe", recipe)
+            putParcelableArrayList("groceryList", ArrayList(groceryList))
+            putInt("imagePlaceholder", R.drawable.image_placeholder)
+        }
+
+        val recipeDetailsFragment = RecipeDetailsFragment()
+        recipeDetailsFragment.arguments = args
+
         holder.clickableOverlay.setOnClickListener {
 
-            val recipeDetailsFragment = RecipeDetailsFragment.newInstance(recipe)
 
-            // Get the Navigation Controller from the activity and navigate to the fragment
             val navController = Navigation.findNavController(holder.itemView)
-            navController.navigate(R.id.openRecipeDetails, recipeDetailsFragment.arguments)
+            navController.navigate(R.id.openRecipeDetails, args)
         }
     }
 }

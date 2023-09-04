@@ -5,27 +5,27 @@ import android.os.Parcelable
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 
 data class RecipeCard(
-    val recipeImage: Int,
-    val recipeName: String,
-    val recipeDuration: String,
-    val groceryList: List<GroceryItem> // Include groceryList here
+        val id: Int,
+        val recipeName: String,
+        val nb_per: Int,
+        val recipeDuration: String,
+        val instruction: String,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        // Read groceryList from parcel
-        mutableListOf<GroceryItem>().apply {
-            parcel.readTypedList(this, GroceryItem.CREATOR)
-        }
+            parcel.readInt(),
+            parcel.readString() ?: "",
+            parcel.readInt(),
+            parcel.readString() ?: "",
+            parcel.readString() ?: "",
+
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(recipeImage)
+        parcel.writeInt(id)
         parcel.writeString(recipeName)
+        parcel.writeInt(nb_per)
         parcel.writeString(recipeDuration)
-        // Write groceryList to parcel
-        parcel.writeTypedList(groceryList)
+        parcel.writeString(instruction)
     }
 
     override fun describeContents(): Int {
