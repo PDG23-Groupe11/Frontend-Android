@@ -99,11 +99,17 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
         if (cursor.moveToFirst()) {
             do {
-                val ingredientId = cursor.getInt(cursor.getColumnIndex("IngredientId"))
-                val name = cursor.getString(cursor.getColumnIndex("Name"))
-                val unit = cursor.getString(cursor.getColumnIndex("Unit"))
-                val quantity = cursor.getInt(cursor.getColumnIndex("Quantity"))
-                val isPurchased = cursor.getInt(cursor.getColumnIndex("IsPurchased")) == 1
+                val ingredientIdIndex = cursor.getColumnIndex("IngredientId")
+                val nameIndex = cursor.getColumnIndex("Name")
+                val unitIndex = cursor.getColumnIndex("Unit")
+                val quantityIndex = cursor.getColumnIndex("Quantity")
+                val isPurchasedIndex = cursor.getColumnIndex("IsPurchased")
+
+                val ingredientId = if (ingredientIdIndex != -1) cursor.getInt(ingredientIdIndex) else 0
+                val name = if (nameIndex != -1) cursor.getString(nameIndex) else ""
+                val unit = if (unitIndex != -1) cursor.getString(unitIndex) else ""
+                val quantity = if (quantityIndex != -1) cursor.getInt(quantityIndex) else 0
+                val isPurchased = if (isPurchasedIndex != -1) cursor.getInt(isPurchasedIndex) == 1 else false
 
                 val groceryItem = GroceryItem(
                     ingredientId,
