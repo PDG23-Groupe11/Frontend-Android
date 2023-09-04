@@ -11,11 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.databinding.FragmentHomeBinding
-import ch.heigvd.pdg_grocerypal.list.ListFragment
 import ch.heigvd.pdg_grocerypal.recipes.RecipeAdapterVertical
 import ch.heigvd.pdg_grocerypal.recipes.RecipeCard
-import android.os.Handler
-
 
 
 class HomeFragment : Fragment() {
@@ -69,7 +66,7 @@ class HomeFragment : Fragment() {
             navController.navigate(R.id.listFragment)
         }
 
-        val seeAllButton = view.findViewById<Button>(R.id.seeAllButton)
+        val seeAllButton = view.findViewById<Button>(R.id.logoutButton)
         seeAllButton.setOnClickListener {
             val navController = Navigation.findNavController(view)
 

@@ -43,7 +43,8 @@ class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
 
             // Get the Navigation Controller from the activity and navigate to the fragment
             val navController = Navigation.findNavController(holder.itemView)
-            navController.navigate(R.id.openRecipeDetails, recipeDetailsFragment.arguments)
+            navController.popBackStack()
+            navController.navigate(R.id.recipeDetailsFragment, recipeDetailsFragment.arguments)
         }
     }
 }

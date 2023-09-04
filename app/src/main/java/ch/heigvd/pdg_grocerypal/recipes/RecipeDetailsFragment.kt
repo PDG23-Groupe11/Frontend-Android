@@ -7,14 +7,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.heigvd.pdg_grocerypal.R
-import ch.heigvd.pdg_grocerypal.databinding.FragmentDetailRecipeBinding
-import androidx.navigation.fragment.findNavController
 import ch.heigvd.pdg_grocerypal.data.model.NutritionalValue
 import ch.heigvd.pdg_grocerypal.data.model.NutritionalValueType
 import ch.heigvd.pdg_grocerypal.data.model.NutritionalValues
-import kotlin.reflect.KProperty
+import ch.heigvd.pdg_grocerypal.databinding.FragmentDetailRecipeBinding
 
 
 class RecipeDetailsFragment() : Fragment() {
@@ -111,8 +110,8 @@ class RecipeDetailsFragment() : Fragment() {
         val returnButton = view.findViewById<ImageView>(R.id.blackArrowReturn)
 
         returnButton.setOnClickListener {
-            // Navigate back to the previous fragment
-            findNavController().navigateUp()
+            val navController = Navigation.findNavController(view)
+            navController.navigate(R.id.returnToRecipeView)
         }
 
         return view
