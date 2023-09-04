@@ -42,10 +42,10 @@ class HomeFragment : Fragment() {
             mollit anim id est laborum.
         """.trimIndent()
 
-        recipeList1 = listOf(
-            RecipeCard(R.drawable.crepes_image, "Crêpes", "30 min", groceryList),
-            RecipeCard(R.drawable.lasagne_image, "Lasagnes", "90 min", groceryList),
-            RecipeCard(R.drawable.burger_image1, "Burger", "30 min", groceryList)
+        recipeList1 = mutableListOf(
+            RecipeCard(1, "Crêpes", 2,"30 min", recipePreparationText),
+            RecipeCard(2, "Lasagnes", 4,"60 min", recipePreparationText),
+            RecipeCard(3, "Burger", 1,"30 min", recipePreparationText)
         )
 
 

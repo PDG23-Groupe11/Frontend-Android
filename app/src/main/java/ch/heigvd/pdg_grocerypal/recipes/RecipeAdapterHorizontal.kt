@@ -37,11 +37,11 @@ class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
         val recipe = recipeList[position]
 
         val groceryList = mutableListOf(
-                GroceryItem("Farine", "g", "100"),
-                GroceryItem("Lait", "l", "4"),
-                GroceryItem("Oeuf", "pcs", "6"),
-                GroceryItem("Chocolat noir", "g", "200"),
-                GroceryItem("Chocolat au lait", "g", "200")
+                GroceryItem(1, "Farine", "g", 100),
+                GroceryItem(2, "Lait", "l", 4),
+                GroceryItem(3, "Oeuf", "pcs", 6),
+                GroceryItem(4, "Chocolat noir", "g", 200),
+                GroceryItem(5, "Chocolat au lait", "g", 200)
         )
 
         holder.recipeImageView.setImageResource(R.drawable.image_placeholder)
