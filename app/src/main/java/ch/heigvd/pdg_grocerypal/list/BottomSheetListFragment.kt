@@ -19,9 +19,8 @@ class BottomSheetListFragment(private val groceryList: List<GroceryItem>, privat
     ): View? {
         val binding = FragmentBottomSheetListBinding.inflate(inflater, container, false)
         val view = binding.root
-
         binding.ingredientName.text = groceryList[position].name
-        binding.quantityEditText.setText(groceryList[position].quantity)
+        binding.quantityEditText.setText(groceryList[position].quantity.toString())
 
         binding.minusButton.setOnClickListener {
             val currentQuantity = binding.quantityEditText.text.toString().toIntOrNull() ?: 0

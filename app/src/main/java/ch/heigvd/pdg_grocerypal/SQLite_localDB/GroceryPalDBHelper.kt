@@ -1,5 +1,6 @@
 package ch.heigvd.pdg_grocerypal.SQLite_localDB
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -74,15 +75,16 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.execSQL("INSERT INTO In_Shopping_List (Ingredient_id, Unit_id, Quantity, Buy) VALUES (2, 2, '2', 0)")
         db.execSQL("INSERT INTO In_Shopping_List (Ingredient_id, Unit_id, Quantity, Buy) VALUES (3, 3, '2', 0)")
         db.execSQL("INSERT INTO In_Shopping_List (Ingredient_id, Unit_id, Quantity, Buy) VALUES (4, 1, '100', 0)")
+        db.execSQL("INSERT INTO In_Shopping_List (Ingredient_id, Unit_id, Quantity, Buy) VALUES (5, 1, '100', 0)")
+        db.execSQL("INSERT INTO In_Shopping_List (Ingredient_id, Unit_id, Quantity, Buy) VALUES (6, 1, '300', 0)")
+
     }
 
     fun getAllShoppingListItems(): MutableList<GroceryItem> {
         val groceryList = mutableListOf<GroceryItem>()
 
-        // Obtenez une référence à la base de données en mode lecture
         val db = readableDatabase
 
-        // Définissez la requête SQL personnalisée pour extraire les données de la table In_Shopping_List
         val query = "SELECT " +
                 "In_Shopping_List.Ingredient_id AS IngredientId, " +
                 "Ingredient.Name AS Name, " +
@@ -93,37 +95,71 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
                 "INNER JOIN Ingredient ON In_Shopping_List.Ingredient_id = Ingredient.ID " +
                 "INNER JOIN Unit ON In_Shopping_List.Unit_id = Unit.ID"
 
-        // Exécutez la requête SQL et obtenez un Cursor
         val cursor = db.rawQuery(query, null)
 
-        // Parcourez le Cursor pour extraire les données
         if (cursor.moveToFirst()) {
             do {
+                val ingredientId = cursor.getInt(cursor.getColumnIndex("IngredientId"))
                 val name = cursor.getString(cursor.getColumnIndex("Name"))
                 val unit = cursor.getString(cursor.getColumnIndex("Unit"))
                 val quantity = cursor.getInt(cursor.getColumnIndex("Quantity"))
                 val isPurchased = cursor.getInt(cursor.getColumnIndex("IsPurchased")) == 1
 
-                // Créez un objet GroceryItem à partir des données extraites
                 val groceryItem = GroceryItem(
+                    ingredientId,
                     name,
                     unit,
                     quantity,
                     isPurchased
                 )
 
-                // Ajoutez l'objet GroceryItem à la liste
                 groceryList.add(groceryItem)
             } while (cursor.moveToNext())
         }
 
-        // Fermez le Cursor et la base de données
         cursor.close()
         db.close()
 
-        // Renvoyez la liste d'objets GroceryItem
         return groceryList
     }
+
+
+    fun deletePurchasedItem(ingredientId: Int) {
+        val db = writableDatabase
+        val whereClause = "Ingredient_id = ?"
+        val whereArgs = arrayOf(ingredientId.toString())
+
+        db.delete("In_Shopping_List", whereClause, whereArgs)
+        db.close()
+    }
+
+    fun deleteAllPurchasedItems() {
+        val db = writableDatabase
+        val whereClause = "Buy = 1"
+        db.delete("In_Shopping_List", whereClause, null)
+
+        db.close()
+    }
+
+    fun updateItemPurchasedStatus(ingredientId: Int, isPurchased: Boolean) {
+        val db = writableDatabase
+        val whereClause = "Ingredient_id = ?"
+        val whereArgs = arrayOf(ingredientId.toString())
+        val values = ContentValues()
+        values.put("Buy", if (isPurchased) 1 else 0)
+        db.update("In_Shopping_List", values, whereClause, whereArgs)
+        db.close()
+    }
+    fun updateQuantityInShoppingList(ingredientId: Int, newQuantity: Int) {
+        val db = writableDatabase
+        val whereClause = "Ingredient_id = ?"
+        val whereArgs = arrayOf(ingredientId.toString())
+        val values = ContentValues()
+        values.put("Quantity", newQuantity)
+        db.update("In_Shopping_List", values, whereClause, whereArgs)
+        db.close()
+    }
+
 
 
 }

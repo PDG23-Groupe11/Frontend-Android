@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class GroceryItem(
+    val ingredientId: Int,
     val name: String,
     val unit: String,
     var quantity: Int,
@@ -48,6 +49,7 @@ data class GroceryItem(
 
     // Constructor for reading from a Parcel
     constructor(parcel: Parcel) : this(
+        ingredientId = parcel.readInt(),
         name = parcel.readString() ?: "",
         unit = parcel.readString() ?: "",
         quantity = parcel.readInt(),
