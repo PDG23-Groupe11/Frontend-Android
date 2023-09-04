@@ -6,9 +6,9 @@ import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 
 data class RecipeCard(
         val id: Int,
-        val recipeName: String,
+        val name: String,
         val nb_per: Int,
-        val recipeDuration: String,
+        val prep_time: String,
         val instruction: String,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -22,9 +22,9 @@ data class RecipeCard(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
-        parcel.writeString(recipeName)
+        parcel.writeString(name)
         parcel.writeInt(nb_per)
-        parcel.writeString(recipeDuration)
+        parcel.writeString(prep_time)
         parcel.writeString(instruction)
     }
 

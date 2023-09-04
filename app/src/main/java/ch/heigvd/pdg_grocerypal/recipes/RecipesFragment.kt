@@ -1,24 +1,39 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
-import ch.heigvd.pdg_grocerypal.R
+import ch.heigvd.pdg_grocerypal.backEndConnections.ApiResponse
+import ch.heigvd.pdg_grocerypal.backEndConnections.ApiService
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.databinding.FragmentRecipesBinding
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.converter.gson.GsonConverterFactory
+
 
 class RecipesFragment : Fragment() {
 
     private lateinit var binding: FragmentRecipesBinding
-    private lateinit var recipeList1: List<RecipeCard>
-    private lateinit var ownRecipeList: List<RecipeCard>
+    private lateinit var recipeList1: MutableList<RecipeCard>
+    private lateinit var ownRecipeList: MutableList<RecipeCard>
     private lateinit var adapter1: RecipeAdapterHorizontal
     private lateinit var adapter2: RecipeAdapterVertical
     private lateinit var groceryList: MutableList<GroceryItem>
     private lateinit var adapterOwnRecipe: RecipeAdapterVertical
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,6 +41,7 @@ class RecipesFragment : Fragment() {
     ): View {
         binding = FragmentRecipesBinding.inflate(inflater, container, false)
         val view = binding.root
+
 
         groceryList = mutableListOf(
             GroceryItem("Farine", "g", "100"),
@@ -45,17 +61,55 @@ class RecipesFragment : Fragment() {
         """.trimIndent()
 
         recipeList1 = mutableListOf(
-            RecipeCard(1, "Crêpes", 2,"30 min", recipePreparationText),
-                RecipeCard(2, "Lasagnes", 4,"60 min", recipePreparationText),
-                RecipeCard(3, "Burger", 1,"30 min", recipePreparationText),
-                RecipeCard(3, "Burger", 1,"30 min", recipePreparationText),
-                RecipeCard(3, "Burger", 1,"30 min", recipePreparationText),
-                RecipeCard(1, "Crêpes", 2,"30 min", recipePreparationText)
+            RecipeCard(2, "Lasagnes", 4,"60 min", recipePreparationText)
         )
+
 
         ownRecipeList = mutableListOf(
             RecipeCard(4, "Poulet au curry", 3,"45 min", recipePreparationText)
         )
+
+
+        // Define your base URL
+        val BASE_URL = "http://10.0.2.2:8080"
+
+        // Initialize Retrofit
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        // Create an instance of the ApiService
+        val apiService = retrofit.create(ApiService::class.java)
+
+        // Fetch recipes
+        val recipesCall = apiService.fetchRecipes()
+        recipesCall.enqueue(object : Callback<MutableList<RecipeCard>> {
+            override fun onResponse(call: Call<MutableList<RecipeCard>>, response: Response<MutableList<RecipeCard>>) {
+                if (response.isSuccessful) {
+                    val recipes = response.body() ?: mutableListOf()
+
+                        recipeList1.addAll(recipes)
+
+                        for (recipe in recipeList1) {
+                            Log.d("RecipeList1", "Recipe ID: ${recipe.id}")
+                            Log.d("RecipeList1", "Recipe Name: ${recipe.name}")
+                            Log.d("RecipeList1", "nb per: ${recipe.nb_per}")
+                            Log.d("RecipeList1", "temps: ${recipe.prep_time}")
+                            Log.d("RecipeList1", "instructions: ${recipe.instruction}")
+                        }
+
+                    adapter1.notifyDataSetChanged()
+                    adapter2.notifyDataSetChanged()
+                } else {
+                    showError("Failed to fetch recipes: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<MutableList<RecipeCard>>, t: Throwable) {
+                showError("Network or other error occurred: ${t.message}")
+            }
+        })
 
 
         adapter1 = RecipeAdapterHorizontal(recipeList1)
@@ -70,6 +124,14 @@ class RecipesFragment : Fragment() {
 
 
         return view
+    }
+
+    fun showError(errorMessage: String) {
+
+        // Log the error message to Logcat
+        Log.e("Error", errorMessage)
+
+        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
     }
 
 }

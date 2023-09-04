@@ -39,8 +39,8 @@ class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
         )
 
         holder.recipeImageView.setImageResource(R.drawable.image_placeholder)
-        holder.recipeNameTv.text = recipe.recipeName
-        holder.recipeDurationTv.text = recipe.recipeDuration
+        holder.recipeNameTv.text = recipe.name
+        holder.recipeDurationTv.text = recipe.prep_time
 
 
 

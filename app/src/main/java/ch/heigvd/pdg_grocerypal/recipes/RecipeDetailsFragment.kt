@@ -43,8 +43,8 @@ class RecipeDetailsFragment() : Fragment() {
 
         // Now, you can set the values to your views if the recipe is not null
         recipe?.let {
-            binding.recipeTitle.text = it.recipeName
-            binding.itemDuration.text = it.recipeDuration
+            binding.recipeTitle.text = it.name
+            binding.itemDuration.text = it.prep_time
             binding.recipePreparationText.text = it.instruction
         }
 
