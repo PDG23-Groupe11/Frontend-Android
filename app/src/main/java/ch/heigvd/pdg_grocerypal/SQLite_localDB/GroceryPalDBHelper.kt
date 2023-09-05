@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient
+import ch.heigvd.pdg_grocerypal.data.model.Unit
+
 
 class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryPalLocalDB",null, 1) {
     override fun onCreate(db: SQLiteDatabase) {
@@ -203,6 +205,65 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
         return ingredients
     }
+
+    fun getAllUnits(): MutableList<Unit> {
+        val unitList = mutableListOf<Unit>()
+        val db = readableDatabase
+
+        val query = "SELECT ID, Name FROM Unit"
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val idIndex = cursor.getColumnIndex("ID")
+                val nameIndex = cursor.getColumnIndex("Name")
+
+                val id = if (idIndex != -1) cursor.getInt(idIndex) else 0
+                val name = if (nameIndex != -1) cursor.getString(nameIndex) else ""
+                val unit = Unit(id, name)
+                unitList.add(unit)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+
+        return unitList
+    }
+
+    fun addOrUpdateShoppingListItem(ingredientId: Int, unitId: Int, quantity: Int) {
+        val db = writableDatabase
+
+        val whereClause = "Ingredient_id = ? AND Unit_id = ?"
+        val whereArgs = arrayOf(ingredientId.toString(), unitId.toString())
+
+        val cursor = db.query("In_Shopping_List", arrayOf("Quantity"), whereClause, whereArgs, null, null, null)
+        val columnIndex = cursor.getColumnIndex("Quantity")
+        val existingQuantity = if (columnIndex != -1 && cursor.moveToFirst()) {
+            cursor.getInt(columnIndex)
+        } else {
+            0
+        }
+        val newQuantity = existingQuantity + quantity
+
+        if (cursor.moveToFirst()) {
+            val contentValues = ContentValues()
+            contentValues.put("Quantity", newQuantity)
+            db.update("In_Shopping_List", contentValues, whereClause, whereArgs)
+        } else {
+            val contentValues = ContentValues()
+            contentValues.put("Ingredient_id", ingredientId)
+            contentValues.put("Unit_id", unitId)
+            contentValues.put("Quantity", newQuantity)
+
+            db.insert("In_Shopping_List", null, contentValues)
+        }
+
+        cursor.close()
+        db.close()
+    }
+
+
 
 
 }

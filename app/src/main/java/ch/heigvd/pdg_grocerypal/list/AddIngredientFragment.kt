@@ -1,10 +1,13 @@
 package ch.heigvd.pdg_grocerypal.list
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +25,7 @@ class AddIngredientFragment : Fragment() {
     private lateinit var ingredientAdapter: IngredientAdapter
     private var ingredientList = mutableListOf<Ingredient>()
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,10 +38,10 @@ class AddIngredientFragment : Fragment() {
 
         val dbHelper = GroceryPalDBHelper(requireContext())
         ingredientList = dbHelper.getAllIngredients()
-
-        ingredientAdapter = IngredientAdapter(ingredientList)
+        ingredientAdapter = IngredientAdapter(requireContext(), ingredientList)
         recyclerView.adapter = ingredientAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
+
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -58,6 +62,4 @@ class AddIngredientFragment : Fragment() {
 
         return rootView
     }
-
-
 }
