@@ -30,23 +30,15 @@ class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipeList[position]
-        val groceryList = mutableListOf(
-                GroceryItem("Farine", "g", "100"),
-                GroceryItem("Lait", "l", "4"),
-                GroceryItem("Oeuf", "pcs", "6"),
-                GroceryItem("Chocolat noir", "g", "200"),
-                GroceryItem("Chocolat au lait", "g", "200")
-        )
 
         holder.recipeImageView.setImageResource(R.drawable.image_placeholder)
         holder.recipeNameTv.text = recipe.name
-        holder.recipeDurationTv.text = recipe.prep_time
+        holder.recipeDurationTv.text = recipe.prep_time + " min"
 
 
 
         val args = Bundle().apply {
             putParcelable("recipe", recipe)
-            putParcelableArrayList("groceryList", ArrayList(groceryList))
             putInt("imagePlaceholder", R.drawable.image_placeholder)
         }
 

@@ -1,6 +1,7 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.databinding.FragmentDetailRecipeBinding
 import androidx.navigation.fragment.findNavController
+import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
+import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils.showError
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
+import ch.heigvd.pdg_grocerypal.data.model.Ingredient
 import ch.heigvd.pdg_grocerypal.data.model.NutritionalValue
 import ch.heigvd.pdg_grocerypal.data.model.NutritionalValueType
 import ch.heigvd.pdg_grocerypal.data.model.NutritionalValues
@@ -21,6 +25,7 @@ import kotlin.reflect.KProperty
 
 class RecipeDetailsFragment() : Fragment() {
 
+    private lateinit var ingredientList: MutableList<Ingredient>
     private lateinit var binding: FragmentDetailRecipeBinding
     private lateinit var adapter: RecipeAdapterIngredients
     private var currentQuantity = 1
@@ -34,12 +39,31 @@ class RecipeDetailsFragment() : Fragment() {
 
         val recipe = arguments?.getParcelable<RecipeCard>("recipe")
 
-        val groceryList = arguments?.getParcelableArrayList<GroceryItem>("groceryList") ?: mutableListOf()
-
         val imagePlaceholderResId = arguments?.getInt("imagePlaceholder") ?: R.drawable.image_placeholder
+
+        ingredientList = mutableListOf()
 
         binding.recipeImage.setImageResource(imagePlaceholderResId)
 
+        if (recipe != null) {
+            val recipeIdString = recipe.id.toString()
+            ConnectionRecipeUtils.fetchIngredientsForRecipe(
+                recipeIdString,
+                onSuccess = { ingredientsList ->
+                    ingredientList.addAll(ingredientsList)
+
+                    for (ingredient in ingredientsList) {
+                        Log.d("ReceivedIngredient", "Ingredient ID: ${ingredient.id}")
+                        Log.d("ReceivedIngredient", "Ingredient Name: ${ingredient.name}")
+                        Log.d("ReceivedIngredient", "Ingredient Quantity: ${ingredient.quantity}")
+                    }
+                    adapter.notifyDataSetChanged()
+                },
+                onError = { errorMessage ->
+                    showError(errorMessage)
+                }
+            )
+        }
 
         // Now, you can set the values to your views if the recipe is not null
         recipe?.let {
@@ -66,43 +90,18 @@ class RecipeDetailsFragment() : Fragment() {
             adapter.notifyDataSetChanged()
         }
 
-        adapter = RecipeAdapterIngredients(groceryList, currentQuantity)
+        adapter = RecipeAdapterIngredients(ingredientList, currentQuantity)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         // TODO lier a la quantité profil
         binding.quantityEditText.setText("1")
 
-        // Add an EditText for recipe preparation text
-        val recipePreparationField = view.findViewById<TextView>(R.id.recipePreparationText)
 
 
-
-//        // Set the text in the EditText
-//        recipePreparationField.setText(recipePreparationText)
-
-        val nutritionalValues = NutritionalValues(
-            fiber = NutritionalValue(NutritionalValueType.FIBER, "g", "5"),
-            protein = NutritionalValue(NutritionalValueType.PROTEIN, "g", "10"),
-            energy = NutritionalValue(NutritionalValueType.ENERGY, "kcal", "200"),
-            carbs = NutritionalValue(NutritionalValueType.CARBS, "g", "30"),
-            fat = NutritionalValue(NutritionalValueType.FAT, "g", "15")
-        )
 
         // Initialize the nutritionalValueTextView
         val nutritionalValueTextView = view.findViewById<TextView>(R.id.nutritionalValueTextView)
 
-        // Create a StringBuilder to build the text
-        val nutritionalValueText = StringBuilder()
-
-        // Iterate through the NutritionalValues and append each value to the StringBuilder
-        appendNutritionalValue(nutritionalValues.fiber, nutritionalValueText)
-        appendNutritionalValue(nutritionalValues.protein, nutritionalValueText)
-        appendNutritionalValue(nutritionalValues.energy, nutritionalValueText)
-        appendNutritionalValue(nutritionalValues.carbs, nutritionalValueText)
-        appendNutritionalValue(nutritionalValues.fat, nutritionalValueText)
-
-        // Set the formatted text in the nutritionalValueTextView
-        nutritionalValueTextView.text = nutritionalValueText.toString()
 
         val returnButton = view.findViewById<ImageView>(R.id.blackArrowReturn)
 
