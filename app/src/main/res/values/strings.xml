@@ -34,4 +34,5 @@
     <string name="empty_list">Aucun produit dans votre liste</string>
     <string name="delete_produce">Supprimer les produits achetés</string>
     <string name="minustext">-</string>
+    <string name="ajouter_ingredient">Ajouter un ingrédient</string>
 </resources>

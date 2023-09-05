@@ -5,7 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.databinding.FragmentListBinding
@@ -40,6 +43,14 @@ class ListFragment : Fragment() {
 
         val dbHelper = GroceryPalDBHelper(requireContext())
         groceryList = dbHelper.getAllShoppingListItems()
+
+        val addIngredientButton = view.findViewById<Button>(R.id.addIngredientButton)
+        addIngredientButton.setOnClickListener {
+            val navController = Navigation.findNavController(view)
+
+            navController.popBackStack()
+            navController.navigate(R.id.addIngredientFragment)
+        }
 
         updateEmptyListMessageVisibility()
         return view

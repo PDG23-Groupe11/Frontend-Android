@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
+import ch.heigvd.pdg_grocerypal.data.model.Ingredient
 
 class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryPalLocalDB",null, 1) {
     override fun onCreate(db: SQLiteDatabase) {
@@ -44,9 +45,10 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     private fun insertDefaultUnits(db: SQLiteDatabase) {
         val unitValues = arrayOf(
             "('g')",
-            "('l')",
+            "('ml')",
             "('pcs')",
-            // Ajoutez d'autres unités de base ici
+            "('c.à.c')",
+            "('c.à.s')"
         )
 
         unitValues.forEach { value ->
@@ -166,6 +168,41 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.close()
     }
 
+
+
+    fun getAllIngredients(): MutableList<Ingredient> {
+        val ingredients = mutableListOf<Ingredient>()
+        val db = readableDatabase
+        val query = "SELECT * FROM Ingredient"
+        val cursor = db.rawQuery(query, null)
+
+        cursor.use {
+            while (cursor.moveToNext()) {
+                val idIndex = cursor.getColumnIndex("ID")
+                val nameIndex = cursor.getColumnIndex("Name")
+                val fiberIndex = cursor.getColumnIndex("Fiber")
+                val proteinIndex = cursor.getColumnIndex("Protein")
+                val energyIndex = cursor.getColumnIndex("Energy")
+                val carbsIndex = cursor.getColumnIndex("Carbs")
+                val fatIndex = cursor.getColumnIndex("Fat")
+
+                val id = if (idIndex != -1) cursor.getInt(idIndex) else 0
+                val name = if (nameIndex != -1) cursor.getString(nameIndex) else ""
+                val fiber = if (fiberIndex != -1) cursor.getFloat(fiberIndex) else 0.0f
+                val protein = if (proteinIndex != -1) cursor.getFloat(proteinIndex) else 0.0f
+                val energy = if (energyIndex != -1) cursor.getInt(energyIndex) else 0
+                val carb = if (carbsIndex != -1) cursor.getFloat(carbsIndex) else 0.0f
+                val fat = if (fatIndex != -1) cursor.getFloat(fatIndex) else 0.0f
+
+                val ingredient = Ingredient(id, name, fiber, protein, energy, carb, fat)
+                ingredients.add(ingredient)
+            }
+        }
+
+        db.close()
+
+        return ingredients
+    }
 
 
 }
