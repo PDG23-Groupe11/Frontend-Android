@@ -49,8 +49,8 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
             "('g')",
             "('ml')",
             "('pcs')",
-            "('c.à.c')",
-            "('c.à.s')"
+            "('c.a.c')",
+            "('c.a.s')"
         )
 
         unitValues.forEach { value ->
@@ -65,7 +65,6 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
             "('Chocolat noir', 7.0, 5.3, 570, 55.0, 35.0)",
             "('Chocolat au lait', 3.0, 5.0, 520, 58.0, 30.0)",
             "('Ovomaltine', 3.0, 5.0, 520, 58.0, 30.0)"
-            // Ajoutez d'autres ingrédients de base ici
         )
 
         ingredientValues.forEach { value ->
