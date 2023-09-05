@@ -5,6 +5,9 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
+import ch.heigvd.pdg_grocerypal.data.model.Ingredient
+import ch.heigvd.pdg_grocerypal.data.model.Unit
+
 
 class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryPalLocalDB",null, 1) {
     override fun onCreate(db: SQLiteDatabase) {
@@ -44,9 +47,10 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     private fun insertDefaultUnits(db: SQLiteDatabase) {
         val unitValues = arrayOf(
             "('g')",
-            "('l')",
+            "('ml')",
             "('pcs')",
-            // Ajoutez d'autres unités de base ici
+            "('c.a.c')",
+            "('c.a.s')"
         )
 
         unitValues.forEach { value ->
@@ -61,7 +65,6 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
             "('Chocolat noir', 7.0, 5.3, 570, 55.0, 35.0)",
             "('Chocolat au lait', 3.0, 5.0, 520, 58.0, 30.0)",
             "('Ovomaltine', 3.0, 5.0, 520, 58.0, 30.0)"
-            // Ajoutez d'autres ingrédients de base ici
         )
 
         ingredientValues.forEach { value ->
@@ -165,6 +168,100 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.update("In_Shopping_List", values, whereClause, whereArgs)
         db.close()
     }
+
+
+
+    fun getAllIngredients(): MutableList<Ingredient> {
+        val ingredients = mutableListOf<Ingredient>()
+        val db = readableDatabase
+        val query = "SELECT * FROM Ingredient"
+        val cursor = db.rawQuery(query, null)
+
+        cursor.use {
+            while (cursor.moveToNext()) {
+                val idIndex = cursor.getColumnIndex("ID")
+                val nameIndex = cursor.getColumnIndex("Name")
+                val fiberIndex = cursor.getColumnIndex("Fiber")
+                val proteinIndex = cursor.getColumnIndex("Protein")
+                val energyIndex = cursor.getColumnIndex("Energy")
+                val carbsIndex = cursor.getColumnIndex("Carbs")
+                val fatIndex = cursor.getColumnIndex("Fat")
+
+                val id = if (idIndex != -1) cursor.getInt(idIndex) else 0
+                val name = if (nameIndex != -1) cursor.getString(nameIndex) else ""
+                val fiber = if (fiberIndex != -1) cursor.getFloat(fiberIndex) else 0.0f
+                val protein = if (proteinIndex != -1) cursor.getFloat(proteinIndex) else 0.0f
+                val energy = if (energyIndex != -1) cursor.getInt(energyIndex) else 0
+                val carb = if (carbsIndex != -1) cursor.getFloat(carbsIndex) else 0.0f
+                val fat = if (fatIndex != -1) cursor.getFloat(fatIndex) else 0.0f
+
+                val ingredient = Ingredient(id, name, fiber, protein, energy, carb, fat)
+                ingredients.add(ingredient)
+            }
+        }
+
+        db.close()
+
+        return ingredients
+    }
+
+    fun getAllUnits(): MutableList<Unit> {
+        val unitList = mutableListOf<Unit>()
+        val db = readableDatabase
+
+        val query = "SELECT ID, Name FROM Unit"
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val idIndex = cursor.getColumnIndex("ID")
+                val nameIndex = cursor.getColumnIndex("Name")
+
+                val id = if (idIndex != -1) cursor.getInt(idIndex) else 0
+                val name = if (nameIndex != -1) cursor.getString(nameIndex) else ""
+                val unit = Unit(id, name)
+                unitList.add(unit)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+
+        return unitList
+    }
+
+    fun addOrUpdateShoppingListItem(ingredientId: Int, unitId: Int, quantity: Int) {
+        val db = writableDatabase
+
+        val whereClause = "Ingredient_id = ? AND Unit_id = ?"
+        val whereArgs = arrayOf(ingredientId.toString(), unitId.toString())
+
+        val cursor = db.query("In_Shopping_List", arrayOf("Quantity"), whereClause, whereArgs, null, null, null)
+        val columnIndex = cursor.getColumnIndex("Quantity")
+        val existingQuantity = if (columnIndex != -1 && cursor.moveToFirst()) {
+            cursor.getInt(columnIndex)
+        } else {
+            0
+        }
+        val newQuantity = existingQuantity + quantity
+
+        if (cursor.moveToFirst()) {
+            val contentValues = ContentValues()
+            contentValues.put("Quantity", newQuantity)
+            db.update("In_Shopping_List", contentValues, whereClause, whereArgs)
+        } else {
+            val contentValues = ContentValues()
+            contentValues.put("Ingredient_id", ingredientId)
+            contentValues.put("Unit_id", unitId)
+            contentValues.put("Quantity", newQuantity)
+
+            db.insert("In_Shopping_List", null, contentValues)
+        }
+
+        cursor.close()
+        db.close()
+    }
+
 
 
 
