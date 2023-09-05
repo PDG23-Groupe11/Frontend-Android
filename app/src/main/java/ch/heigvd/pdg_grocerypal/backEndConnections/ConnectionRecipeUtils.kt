@@ -2,7 +2,6 @@ package ch.heigvd.pdg_grocerypal.backEndConnections
 
 
 import android.util.Log
-import android.widget.Toast
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 import ch.heigvd.pdg_grocerypal.recipes.RecipeCard
@@ -62,8 +61,8 @@ object ConnectionRecipeUtils {
         ingredientsCall.enqueue(object : Callback<MutableList<Ingredient_Quantity>> {
             override fun onResponse(call: Call<MutableList<Ingredient_Quantity>>, response: Response<MutableList<Ingredient_Quantity>>) {
                 if (response.isSuccessful) {
-                    val ingredients = response.body() ?: mutableListOf()
-                    onSuccess(ingredients)
+                    val ingredientsQuantity = response.body() ?: mutableListOf()
+                    onSuccess(ingredientsQuantity)
                 } else {
                     onError("Failed to fetch ingredients: ${response.message()}")
                 }
@@ -75,8 +74,29 @@ object ConnectionRecipeUtils {
         })
     }
 
+    fun fetchIngredients(
+        onSuccess: (MutableList<Ingredient>) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val ingredientsCall = apiService.fetchIngredients()
+        ingredientsCall.enqueue(object : Callback<MutableList<Ingredient>> {
+            override fun onResponse(call: Call<MutableList<Ingredient>>, response: Response<MutableList<Ingredient>>) {
+                if (response.isSuccessful) {
+                    val ingredients = response.body() ?: mutableListOf()
+
+                    onSuccess(ingredients)
+                } else {
+                    onError("Failed to fetch ingredients: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<MutableList<Ingredient>>, t: Throwable) {
+                onError("Network or other error occurred: ${t.message}")
+            }
+        })
+    }
+
     fun showError(errorMessage: String) {
         Log.e("Error", errorMessage)
-
     }
 }

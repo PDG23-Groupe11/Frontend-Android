@@ -258,6 +258,7 @@
             android:padding="8dp"
             android:layout_margin="8dp"
             android:text="Placeholder"
+            android:textSize="18sp"
             app:layout_constraintTop_toBottomOf="@+id/Preparation"
             app:layout_constraintStart_toStartOf="parent"
             android:autofillHints="descriptionRecette" />

@@ -36,7 +36,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
         // A SUPPRIMER quand relié à la DB distante
         insertDefaultUnits(db)
-        insertDefaultIngredients(db)
+        // insertDefaultIngredients(db)
         insertDefaultShoppingList(db)
     }
 
@@ -49,8 +49,8 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
             "('g')",
             "('ml')",
             "('pcs')",
-            "('c.a.c')",
-            "('c.a.s')"
+            "('c.à.c')",
+            "('c.à.s')"
         )
 
         unitValues.forEach { value ->
@@ -267,6 +267,21 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     }
 
 
+    fun getUnitName(unitId: Int): String {
+        val db = readableDatabase
+        val query = "SELECT Name FROM Unit WHERE ID = ?"
+        val cursor = db.rawQuery(query, arrayOf(unitId.toString()))
 
+        var unitName = ""
+        if (cursor.moveToFirst()) {
+            val nameIndex = cursor.getColumnIndex("Name")
+            unitName = cursor.getString(nameIndex) ?: ""
+        }
+
+        cursor.close()
+        db.close()
+
+        return unitName
+    }
 
 }

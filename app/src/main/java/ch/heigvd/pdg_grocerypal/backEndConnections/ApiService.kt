@@ -10,6 +10,8 @@ import retrofit2.http.Path
 interface ApiService {
     @GET("/recipes")
     fun fetchRecipes(): Call<MutableList<RecipeCard>>
+    @GET("/ingredients")
+    fun fetchIngredients(): Call<MutableList<Ingredient>>
     @GET("/ingredients/from_recipe/{id}")
     fun fetchIngredientsForRecipe(@Path("id") recipeId: String): Call<MutableList<Ingredient_Quantity>>
 }

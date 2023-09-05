@@ -1,33 +1,39 @@
 package ch.heigvd.pdg_grocerypal
 
 
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.ui.NavigationUI.setupWithNavController
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import ch.heigvd.pdg_grocerypal.ui.login.LoginActivity
+import android.content.ContentValues
 import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
+import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
+import ch.heigvd.pdg_grocerypal.data.model.Ingredient
+import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 import ch.heigvd.pdg_grocerypal.databinding.ActivityMainBinding
+import ch.heigvd.pdg_grocerypal.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var ingredientQuantityList: MutableList<Ingredient>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Your existing code for the main activity
+        ingredientQuantityList = mutableListOf()
+
+
+        ConnectionRecipeUtils.fetchIngredients(
+            onSuccess = { ingredientsList ->
+                ingredientQuantityList.addAll(ingredientsList)
+                insertIngredientsIntoDatabase(ingredientsList)
+            },
+            onError = { errorMessage ->
+                ConnectionRecipeUtils.showError(errorMessage)
+            }
+        )
 
         // Add a button click listener to open the LoginActivity
         binding.button.setOnClickListener {
@@ -35,5 +41,26 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    private fun insertIngredientsIntoDatabase(ingredientsList: List<Ingredient>) {
+        val dbHelper = GroceryPalDBHelper(this)
+        val db = dbHelper.writableDatabase
+
+        for (ingredient in ingredientsList) {
+            val values = ContentValues()
+            values.put("Name", ingredient.name)
+            values.put("Fiber", ingredient.fiber)
+            values.put("Protein", ingredient.protein)
+            values.put("Energy", ingredient.energy)
+            values.put("Carbs", ingredient.carb)
+            values.put("Fat", ingredient.fat)
+
+            db.insert("Ingredient", null, values)
+        }
+
+        db.close()
+    }
+
+
 }
 

@@ -12,4 +12,3 @@ data class Ingredient_Quantity(
     val quantity: Int
 )
 
-
