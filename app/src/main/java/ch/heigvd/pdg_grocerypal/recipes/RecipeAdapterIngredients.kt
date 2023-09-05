@@ -7,9 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
+import ch.heigvd.pdg_grocerypal.data.model.Ingredient
 
 
-class RecipeAdapterIngredients(private val groceryList: List<GroceryItem>, private var currentQuantity: Int) :
+class RecipeAdapterIngredients(private val ingredientList: List<Ingredient>, private var currentQuantity: Int) :
     RecyclerView.Adapter<RecipeAdapterIngredients.RecipeViewHolder>(){
 
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -22,14 +23,15 @@ class RecipeAdapterIngredients(private val groceryList: List<GroceryItem>, priva
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        val groceryItem = groceryList[position]
-        val totalQuantity = groceryItem.quantity * currentQuantity
-        holder.ingredientDetailsTv.text = "$totalQuantity ${groceryItem.unit} ${groceryItem.name}"
+        val ingredient = ingredientList[position]
+        val totalQuantity = ingredient.quantity * currentQuantity
+// TODO add unit
+        holder.ingredientDetailsTv.text = "$totalQuantity ${ingredient.name}"
     }
 
 
     override fun getItemCount(): Int {
-        return groceryList.size
+        return ingredientList.size
     }
 
     fun updateCurrentQuantity(newQuantity: Int) {

@@ -14,13 +14,15 @@ import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.databinding.FragmentHomeBinding
 import ch.heigvd.pdg_grocerypal.recipes.RecipeAdapterVertical
 import ch.heigvd.pdg_grocerypal.recipes.RecipeCard
+import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
+import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils.showError
 
 
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var groceryList: MutableList<GroceryItem>
-    private lateinit var recipeList1: List<RecipeCard>
+    private lateinit var recipeList1: MutableList<RecipeCard>
     private lateinit var adapter1: RecipeAdapterVertical
     private lateinit var adapter2: LittleListAdapter
 
@@ -33,19 +35,19 @@ class HomeFragment : Fragment() {
 
         val dbHelper = GroceryPalDBHelper(requireContext())
         groceryList = dbHelper.getAllShoppingListItems()
-        val recipePreparationText = """
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
-            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt 
-            mollit anim id est laborum.
-        """.trimIndent()
 
-        recipeList1 = mutableListOf(
-            RecipeCard(1, "Crêpes", 2,"30 min", recipePreparationText),
-            RecipeCard(2, "Lasagnes", 4,"60 min", recipePreparationText),
-            RecipeCard(3, "Burger", 1,"30 min", recipePreparationText)
+        recipeList1 = mutableListOf()
+
+        ConnectionRecipeUtils.fetchRecipes(recipeList1, 3,
+            onSuccess = { updatedRecipeList ->
+                // Handle success, for example, update your adapter and UI here
+                adapter1.notifyDataSetChanged()
+                adapter2.notifyDataSetChanged()
+            },
+            onError = { errorMessage ->
+                // Handle error, for example, show a Toast or log the error
+                showError(errorMessage)
+            }
         )
 
 
