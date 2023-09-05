@@ -2,8 +2,8 @@ package ch.heigvd.pdg_grocerypal.backEndConnections
 
 
 import android.util.Log
-import android.widget.Toast
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient
+import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 import ch.heigvd.pdg_grocerypal.recipes.RecipeCard
 import retrofit2.Call
 import retrofit2.Callback
@@ -54,14 +54,36 @@ object ConnectionRecipeUtils {
 
     fun fetchIngredientsForRecipe(
         recipeId: String,
-        onSuccess: (MutableList<Ingredient>) -> Unit,
+        onSuccess: (MutableList<Ingredient_Quantity>) -> Unit,
         onError: (String) -> Unit
     ) {
         val ingredientsCall = apiService.fetchIngredientsForRecipe(recipeId)
+        ingredientsCall.enqueue(object : Callback<MutableList<Ingredient_Quantity>> {
+            override fun onResponse(call: Call<MutableList<Ingredient_Quantity>>, response: Response<MutableList<Ingredient_Quantity>>) {
+                if (response.isSuccessful) {
+                    val ingredientsQuantity = response.body() ?: mutableListOf()
+                    onSuccess(ingredientsQuantity)
+                } else {
+                    onError("Failed to fetch ingredients: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<MutableList<Ingredient_Quantity>>, t: Throwable) {
+                onError("Network or other error occurred: ${t.message}")
+            }
+        })
+    }
+
+    fun fetchIngredients(
+        onSuccess: (MutableList<Ingredient>) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val ingredientsCall = apiService.fetchIngredients()
         ingredientsCall.enqueue(object : Callback<MutableList<Ingredient>> {
             override fun onResponse(call: Call<MutableList<Ingredient>>, response: Response<MutableList<Ingredient>>) {
                 if (response.isSuccessful) {
                     val ingredients = response.body() ?: mutableListOf()
+
                     onSuccess(ingredients)
                 } else {
                     onError("Failed to fetch ingredients: ${response.message()}")
@@ -76,6 +98,5 @@ object ConnectionRecipeUtils {
 
     fun showError(errorMessage: String) {
         Log.e("Error", errorMessage)
-
     }
 }

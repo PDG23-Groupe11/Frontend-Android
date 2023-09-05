@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
-import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
-import ch.heigvd.pdg_grocerypal.data.model.Ingredient
+import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
+import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 
 
-class RecipeAdapterIngredients(private val ingredientList: List<Ingredient>, private var currentQuantity: Int) :
+class RecipeAdapterIngredients(private val ingredientQuantityList: List<Ingredient_Quantity>, private var currentQuantity: Int) :
     RecyclerView.Adapter<RecipeAdapterIngredients.RecipeViewHolder>(){
 
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -23,15 +23,20 @@ class RecipeAdapterIngredients(private val ingredientList: List<Ingredient>, pri
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        val ingredient = ingredientList[position]
+        val ingredient = ingredientQuantityList[position]
         val totalQuantity = ingredient.quantity * currentQuantity
-// TODO add unit
-        holder.ingredientDetailsTv.text = "$totalQuantity ${ingredient.name}"
+
+        // Get the unit name based on the unitId using the dbHelper instance
+        val dbHelper = GroceryPalDBHelper(holder.itemView.context)
+        val unitName = dbHelper.getUnitName(ingredient.unitId)
+
+        holder.ingredientDetailsTv.text = "$totalQuantity $unitName ${ingredient.name}"
+
     }
 
 
     override fun getItemCount(): Int {
-        return ingredientList.size
+        return ingredientQuantityList.size
     }
 
     fun updateCurrentQuantity(newQuantity: Int) {
