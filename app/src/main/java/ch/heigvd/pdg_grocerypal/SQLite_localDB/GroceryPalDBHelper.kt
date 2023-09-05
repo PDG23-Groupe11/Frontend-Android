@@ -90,6 +90,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
         val query = "SELECT " +
                 "In_Shopping_List.Ingredient_id AS IngredientId, " +
+                "In_Shopping_List.Unit_id AS UnitId, " +
                 "Ingredient.Name AS Name, " +
                 "Unit.Name AS Unit, " +
                 "In_Shopping_List.Quantity AS Quantity, " +
@@ -103,12 +104,14 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         if (cursor.moveToFirst()) {
             do {
                 val ingredientIdIndex = cursor.getColumnIndex("IngredientId")
+                val unitIdIndex = cursor.getColumnIndex("UnitId")
                 val nameIndex = cursor.getColumnIndex("Name")
                 val unitIndex = cursor.getColumnIndex("Unit")
                 val quantityIndex = cursor.getColumnIndex("Quantity")
                 val isPurchasedIndex = cursor.getColumnIndex("IsPurchased")
 
                 val ingredientId = if (ingredientIdIndex != -1) cursor.getInt(ingredientIdIndex) else 0
+                val unitId = if (unitIdIndex != -1) cursor.getInt(unitIdIndex) else 0
                 val name = if (nameIndex != -1) cursor.getString(nameIndex) else ""
                 val unit = if (unitIndex != -1) cursor.getString(unitIndex) else ""
                 val quantity = if (quantityIndex != -1) cursor.getInt(quantityIndex) else 0
@@ -116,6 +119,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
                 val groceryItem = GroceryItem(
                     ingredientId,
+                    unitId,
                     name,
                     unit,
                     quantity,
@@ -133,10 +137,10 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     }
 
 
-    fun deletePurchasedItem(ingredientId: Int) {
+    fun deletePurchasedItem(ingredientId: Int, unitId: Int) {
         val db = writableDatabase
-        val whereClause = "Ingredient_id = ?"
-        val whereArgs = arrayOf(ingredientId.toString())
+        val whereClause = "Ingredient_id = ? AND Unit_id = ?"
+        val whereArgs = arrayOf(ingredientId.toString(), unitId.toString())
 
         db.delete("In_Shopping_List", whereClause, whereArgs)
         db.close()
@@ -150,25 +154,25 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.close()
     }
 
-    fun updateItemPurchasedStatus(ingredientId: Int, isPurchased: Boolean) {
+    fun updateItemPurchasedStatus(ingredientId: Int, unitId: Int, isPurchased: Boolean) {
         val db = writableDatabase
-        val whereClause = "Ingredient_id = ?"
-        val whereArgs = arrayOf(ingredientId.toString())
+        val whereClause = "Ingredient_id = ? AND Unit_id = ?"
+        val whereArgs = arrayOf(ingredientId.toString(), unitId.toString())
         val values = ContentValues()
         values.put("Buy", if (isPurchased) 1 else 0)
         db.update("In_Shopping_List", values, whereClause, whereArgs)
         db.close()
     }
-    fun updateQuantityInShoppingList(ingredientId: Int, newQuantity: Int) {
+
+    fun updateQuantityInShoppingList(ingredientId: Int, unitId: Int, newQuantity: Int) {
         val db = writableDatabase
-        val whereClause = "Ingredient_id = ?"
-        val whereArgs = arrayOf(ingredientId.toString())
+        val whereClause = "Ingredient_id = ? AND Unit_id = ?"
+        val whereArgs = arrayOf(ingredientId.toString(), unitId.toString())
         val values = ContentValues()
         values.put("Quantity", newQuantity)
         db.update("In_Shopping_List", values, whereClause, whereArgs)
         db.close()
     }
-
 
 
     fun getAllIngredients(): MutableList<Ingredient> {

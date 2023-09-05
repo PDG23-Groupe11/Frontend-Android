@@ -39,7 +39,7 @@ class GroceryListAdapter(private val context: Context, private val groceryList: 
 
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
             val dbHelper = GroceryPalDBHelper(context)
-            dbHelper.updateItemPurchasedStatus(groceryItem.ingredientId, isChecked)
+            dbHelper.updateItemPurchasedStatus(groceryItem.ingredientId, groceryItem.unitId, isChecked)
             updateGroceryList(dbHelper.getAllShoppingListItems())
         }
 
