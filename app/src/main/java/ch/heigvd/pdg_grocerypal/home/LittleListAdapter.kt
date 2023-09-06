@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 
+/**
+ * Affichage des ingrédients de la liste
+ */
 class LittleListAdapter(private val groceryList: List<GroceryItem>) :
        RecyclerView.Adapter<LittleListAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemDetails: TextView = itemView.findViewById(R.id.itemDetails)
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -20,7 +22,6 @@ class LittleListAdapter(private val groceryList: List<GroceryItem>) :
             .inflate(R.layout.item_little_grocery, parent, false)
         return ViewHolder(view)
     }
-
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val groceryItem = groceryList[position]

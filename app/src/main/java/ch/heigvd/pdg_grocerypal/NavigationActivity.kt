@@ -15,10 +15,10 @@ class NavigationActivity : AppCompatActivity() {
         val binding = AppNavigationLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize NavController
+        // Initialisation du NavController
         navController = findNavController(R.id.nav_host_fragment)
 
-        // Set up BottomNavigationView with NavController
+        // Mise en place de la barre de navigatio
         binding.bottomNavigationView.setupWithNavController(navController)
     }
 }

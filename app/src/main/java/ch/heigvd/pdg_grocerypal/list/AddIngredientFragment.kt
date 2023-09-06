@@ -1,13 +1,10 @@
 package ch.heigvd.pdg_grocerypal.list
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,8 +13,10 @@ import androidx.navigation.Navigation
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient
-import java.util.ArrayList
 
+/**
+ * Fragment permettant l'ajout d'ingrédients à la liste
+ */
 class AddIngredientFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
@@ -36,13 +35,15 @@ class AddIngredientFragment : Fragment() {
         searchView = rootView.findViewById(R.id.search)
 
 
+        // Récupère tous les ingrédients
         val dbHelper = GroceryPalDBHelper(requireContext())
         ingredientList = dbHelper.getAllIngredients()
         ingredientAdapter = IngredientAdapter(requireContext(), ingredientList)
+
         recyclerView.adapter = ingredientAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-
+        // Filtrage des ingrédients
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -54,6 +55,7 @@ class AddIngredientFragment : Fragment() {
             }
         })
 
+        // Fermeture de la page
         val returnButton = rootView.findViewById<ImageView>(R.id.closeReturn)
         returnButton.setOnClickListener {
             val navController = Navigation.findNavController(rootView)

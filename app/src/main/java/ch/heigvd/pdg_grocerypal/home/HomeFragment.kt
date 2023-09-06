@@ -17,7 +17,9 @@ import ch.heigvd.pdg_grocerypal.recipes.RecipeCard
 import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
 import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils.showError
 
-
+/**
+ * Fragment qui affiche la page home
+ */
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
@@ -40,16 +42,13 @@ class HomeFragment : Fragment() {
 
         ConnectionRecipeUtils.fetchRecipes(recipeList1, 3,
             onSuccess = { updatedRecipeList ->
-                // Handle success, for example, update your adapter and UI here
                 adapter1.notifyDataSetChanged()
                 adapter2.notifyDataSetChanged()
             },
             onError = { errorMessage ->
-                // Handle error, for example, show a Toast or log the error
                 showError(errorMessage)
             }
         )
-
 
         adapter1 = RecipeAdapterVertical(recipeList1)
         binding.recyclerView1.adapter = adapter1
@@ -62,8 +61,8 @@ class HomeFragment : Fragment() {
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
 
+        // Navigation vers la liste de courses
         val modifButton = view.findViewById<Button>(R.id.modifButton)
-
         modifButton.setOnClickListener {
             val navController = Navigation.findNavController(view)
 
@@ -71,6 +70,7 @@ class HomeFragment : Fragment() {
             navController.navigate(R.id.listFragment)
         }
 
+        // Navigation vers les recettes
         val seeAllButton = view.findViewById<Button>(R.id.seeAllButton)
         seeAllButton.setOnClickListener {
             val navController = Navigation.findNavController(view)
