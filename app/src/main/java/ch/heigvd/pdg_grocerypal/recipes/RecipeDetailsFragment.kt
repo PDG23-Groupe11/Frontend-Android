@@ -1,12 +1,15 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +18,7 @@ import ch.heigvd.pdg_grocerypal.databinding.FragmentDetailRecipeBinding
 import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
 import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils.showError
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
-import ch.heigvd.pdg_grocerypal.data.model.NutritionalValue
+import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
 
 
 class RecipeDetailsFragment() : Fragment() {
@@ -131,6 +134,11 @@ class RecipeDetailsFragment() : Fragment() {
             adapter.notifyDataSetChanged()
         }
 
+        binding.AjouterAListeButton.setOnClickListener {
+            showConfirmationDialog(ingredientQuantityList)
+        }
+
+
         adapter = RecipeAdapterIngredients(ingredientQuantityList, currentQuantity)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
@@ -147,7 +155,6 @@ class RecipeDetailsFragment() : Fragment() {
         return view
     }
 
-
     private fun convertToGrams(unitId: Int, quantity: Int): Float {
 
         val unitToGrams = mapOf(
@@ -162,4 +169,41 @@ class RecipeDetailsFragment() : Fragment() {
 
         return quantity * conversionFactor
     }
+
+    private fun showConfirmationDialog(ingredients: List<Ingredient_Quantity>) {
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        val dialogLayout = LayoutInflater.from(context).inflate(R.layout.popup_add_recipe_ingredients, null)
+        val titleTextView = dialogLayout.findViewById<TextView>(R.id.titleTextView)
+        val messageTextView = dialogLayout.findViewById<TextView>(R.id.messageTextView)
+        val addButton = dialogLayout.findViewById<Button>(R.id.addButton)
+        val cancelButton = dialogLayout.findViewById<Button>(R.id.cancelButton)
+        val dbHelper = context?.let { GroceryPalDBHelper(it) }
+
+        titleTextView.text = "Confirmer l'ajout d'ingrédient"
+        messageTextView.text =
+            "Si vous confirmez, tous les ingrédients de cette recette seront ajoutés à votre liste de courses."
+
+        addButton.text = "Ajouter"
+
+        cancelButton.text = "Annuler"
+
+        alertDialogBuilder
+            .setView(dialogLayout)
+            .setCancelable(false)
+
+        val alertDialog = alertDialogBuilder.create()
+
+        addButton.setOnClickListener {
+            dbHelper?.addOrUpdateShoppingListItems(ingredients)
+            Toast.makeText(context, "Ingrédients ajoutés à la liste", Toast.LENGTH_SHORT).show()
+            alertDialog.dismiss()
+        }
+
+        cancelButton.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
+    }
+
 }

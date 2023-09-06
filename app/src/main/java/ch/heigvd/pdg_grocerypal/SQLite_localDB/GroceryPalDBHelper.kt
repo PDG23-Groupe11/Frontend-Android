@@ -6,18 +6,19 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient
+import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 import ch.heigvd.pdg_grocerypal.data.model.Unit
 
 
 class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryPalLocalDB",null, 1) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
-                "CREATE TABLE Unit ( " +
+            "CREATE TABLE Unit ( " +
                     "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "Name TEXT );"
         )
         db.execSQL(
-                "CREATE TABLE Ingredient( " +
+            "CREATE TABLE Ingredient( " +
                     "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "Name TEXT," +
                     "Fiber FLOAT," +
@@ -27,7 +28,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
                     "Fat FLOAT );"
         )
         db.execSQL(
-                "CREATE TABLE In_Shopping_List (" +
+            "CREATE TABLE In_Shopping_List (" +
                     "Ingredient_id INTEGER NOT NULL," +
                     "Unit_id INTEGER NOT NULL," +
                     "Quantity INTEGER NOT NULL," +
@@ -37,7 +38,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         // A SUPPRIMER quand relié à la DB distante
         insertDefaultUnits(db)
         // insertDefaultIngredients(db)
-        insertDefaultShoppingList(db)
+        //insertDefaultShoppingList(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -264,6 +265,12 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
         cursor.close()
         db.close()
+    }
+
+    fun addOrUpdateShoppingListItems(ingredients: List<Ingredient_Quantity>) {
+        for (ingredient in ingredients) {
+            addOrUpdateShoppingListItem(ingredient.id, ingredient.unitId, ingredient.quantity)
+        }
     }
 
 
