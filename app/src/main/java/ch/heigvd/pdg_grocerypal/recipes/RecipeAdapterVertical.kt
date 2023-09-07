@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
+import ch.heigvd.pdg_grocerypal.config.Configuration
 import com.squareup.picasso.Picasso
 
 
@@ -30,7 +31,7 @@ class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipeList[position]
-        val BASE_URL = "http://10.0.2.2:8080"
+        val BASE_URL = Configuration.BaseURL
         val urlString = BASE_URL + "/static/recipeImages/" + recipe.id.toString()
 
         holder.recipeImageView.setImageResource(R.drawable.image_placeholder)

@@ -2,6 +2,7 @@ package ch.heigvd.pdg_grocerypal.backEndConnections
 import android.content.Context
 import android.util.Log
 import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
+import ch.heigvd.pdg_grocerypal.config.Configuration
 import ch.heigvd.pdg_grocerypal.data.model.Credentials
 import ch.heigvd.pdg_grocerypal.data.model.In_Shopping_List
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient
@@ -32,7 +33,7 @@ data class ApiResponse(
 
 object ConnectionRecipeUtils {
 
-    private val BASE_URL = "http://10.0.2.2:8080"
+    private val BASE_URL = Configuration.BaseURL
 
     // Create an OkHttpClient instance
     val okHttpClient = OkHttpClient.Builder()

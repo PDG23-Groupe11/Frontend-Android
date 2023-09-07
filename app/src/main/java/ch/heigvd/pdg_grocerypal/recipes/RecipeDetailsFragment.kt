@@ -20,6 +20,7 @@ import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
 import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils.showError
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
+import ch.heigvd.pdg_grocerypal.config.Configuration
 import com.squareup.picasso.Picasso
 
 
@@ -56,7 +57,7 @@ class RecipeDetailsFragment() : Fragment() {
 
         val recipe = arguments?.getParcelable<RecipeCard>("recipe")
 
-        val BASE_URL = "http://10.0.2.2:8080"
+        val BASE_URL = Configuration.BaseURL
         val urlString = BASE_URL + "/static/recipeImages/" + recipe?.id.toString()
 
         val placeHolder = arguments?.getInt("imagePlaceholder")?: R.drawable.image_placeholder
@@ -86,16 +87,6 @@ class RecipeDetailsFragment() : Fragment() {
                     ingredientQuantityList.addAll(ingredientsList)
 
                     for (ingredient in ingredientsList) {
-
-                        Log.d("IngredientDebug", "ID: ${ingredient.id}")
-                        Log.d("IngredientDebug", "Name: ${ingredient.name}")
-                        Log.d("IngredientDebug", "Fiber: ${ingredient.fiber}")
-                        Log.d("IngredientDebug", "Protein: ${ingredient.protein}")
-                        Log.d("IngredientDebug", "Energy: ${ingredient.energy}")
-                        Log.d("IngredientDebug", "Carb: ${ingredient.carb}")
-                        Log.d("IngredientDebug", "Fat: ${ingredient.fat}")
-                        Log.d("IngredientDebug", "Unit ID: ${ingredient.unitId}")
-                        Log.d("IngredientDebug", "Quantity: ${ingredient.quantity}")
 
                         // Convert quantity to grams
                         val quantityInGrams = convertToGrams(ingredient.unitId, ingredient.quantity)
