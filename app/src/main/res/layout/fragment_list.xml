@@ -11,17 +11,28 @@
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
             android:text="@string/ma_liste"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_margin="12dp" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/addIngredientButton"
+            style="@style/CustomGrayButton"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="12dp"
+            android:text="@string/ajouter_ingredient"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/dividerView"
             android:layout_width="match_parent"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="18dp"
             android:layout_height="1dp"
             android:background="@color/light_gray"
             app:layout_constraintTop_toBottomOf="@id/titleTextView"

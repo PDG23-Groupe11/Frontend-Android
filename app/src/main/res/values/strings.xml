@@ -4,7 +4,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
@@ -34,4 +34,9 @@
     <string name="empty_list">Aucun produit dans votre liste</string>
     <string name="delete_produce">Supprimer les produits achetés</string>
     <string name="minustext">-</string>
+    <string name="ajouter_ingredient">Ajouter un ingrédient</string>
+    <string name="sign_up">Sign up</string>
+    <string name="your_name">Your name</string>
+    <string name="votre_nom">Votre nom</string>
+    <string name="mot_de_passe">Mot de passe</string>
 </resources>
