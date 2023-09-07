@@ -19,6 +19,7 @@ import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
 import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils.showError
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
+import com.squareup.picasso.Picasso
 
 
 class RecipeDetailsFragment() : Fragment() {
@@ -40,15 +41,40 @@ class RecipeDetailsFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDetailRecipeBinding.inflate(inflater, container, false)
+
         val view = binding.root
+
+        val bundle = arguments
+
+        if (bundle != null) {
+            val recipePlaceHolderImage = bundle.getInt("imagePlaceholder")?: R.drawable.image_placeholder
+
+            binding.recipeImage.setImageResource(recipePlaceHolderImage)
+
+        }
 
         val recipe = arguments?.getParcelable<RecipeCard>("recipe")
 
-        val imagePlaceholderResId = arguments?.getInt("imagePlaceholder") ?: R.drawable.image_placeholder
+        val BASE_URL = "http://10.0.2.2:8080"
+        val urlString = BASE_URL + "/static/recipeImages/" + recipe?.id.toString()
+
+        val placeHolder = arguments?.getInt("imagePlaceholder")?: R.drawable.image_placeholder
+
+
+        binding.recipeImage.setImageResource(placeHolder)
 
         ingredientQuantityList = mutableListOf()
 
-        binding.recipeImage.setImageResource(imagePlaceholderResId)
+        val imgWidth = binding.recipeImage.layoutParams.width
+        val imgHeight = binding.recipeImage.layoutParams.height
+
+
+        Picasso.get()
+            .load(urlString) // Replace imageUrl with the URL of the image
+            .placeholder(R.drawable.image_placeholder) // Optional: Set a placeholder drawable while the image is loading
+            .resize(imgWidth, imgHeight) // Optional: Resize the image to specific dimensions
+            .centerCrop() // Optional: Crop the image to fit the ImageView dimensions
+            .into(binding.recipeImage) // Your ImageView
 
 
         if (recipe != null) {

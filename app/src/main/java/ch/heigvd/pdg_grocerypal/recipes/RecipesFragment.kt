@@ -33,7 +33,7 @@ class RecipesFragment : Fragment() {
 
         ownRecipeList = mutableListOf()
 
-        ConnectionRecipeUtils.fetchRecipes(recipeList1, 5,
+        ConnectionRecipeUtils.fetchRecipes(recipeList1, 10,
             onSuccess = { updatedRecipeList ->
                 // Handle success, for example, update your adapter and UI here
                 adapter1.notifyDataSetChanged()
@@ -44,6 +44,8 @@ class RecipesFragment : Fragment() {
                 ConnectionRecipeUtils.showError(errorMessage)
             }
         )
+
+
 
         adapter1 = RecipeAdapterHorizontal(recipeList1)
         binding.recyclerView1.adapter = adapter1

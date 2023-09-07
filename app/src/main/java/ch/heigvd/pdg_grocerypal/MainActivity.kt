@@ -1,39 +1,46 @@
 package ch.heigvd.pdg_grocerypal
 
 
-import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
-import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
-import ch.heigvd.pdg_grocerypal.data.model.Ingredient
-import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 import ch.heigvd.pdg_grocerypal.databinding.ActivityMainBinding
 import ch.heigvd.pdg_grocerypal.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var ingredientQuantityList: MutableList<Ingredient>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ingredientQuantityList = mutableListOf()
+        val sharedPreferencesApp = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        val authToken = sharedPreferencesApp.getString("auth_token", null)
 
+        if (authToken != null) {
+            // After successful login and API request, navigate to the main activity
+            binding.button.visibility = View.GONE
 
-        ConnectionRecipeUtils.fetchIngredients(
-            onSuccess = { ingredientsList ->
-                ingredientQuantityList.addAll(ingredientsList)
-                insertIngredientsIntoDatabase(ingredientsList)
-            },
-            onError = { errorMessage ->
-                ConnectionRecipeUtils.showError(errorMessage)
-            }
-        )
+            val sharedPreferencesUser = getSharedPreferences("UserDataPrefs", Context.MODE_PRIVATE)
+            val surname = sharedPreferencesUser.getString("surname", "")
+
+            // Display a welcome toast message
+            Toast.makeText(this, "Welcome $surname!", Toast.LENGTH_SHORT).show()
+
+            // Delay for 2 seconds before moving to NavigationActivity
+            Handler(Looper.getMainLooper()).postDelayed({
+                val intent = Intent(this, NavigationActivity::class.java)
+                startActivity(intent)
+                finish()
+            }, 2000)
+        }
 
         // Add a button click listener to open the LoginActivity
         binding.button.setOnClickListener {
@@ -41,26 +48,5 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
-    private fun insertIngredientsIntoDatabase(ingredientsList: List<Ingredient>) {
-        val dbHelper = GroceryPalDBHelper(this)
-        val db = dbHelper.writableDatabase
-
-        for (ingredient in ingredientsList) {
-            val values = ContentValues()
-            values.put("Name", ingredient.name)
-            values.put("Fiber", ingredient.fiber)
-            values.put("Protein", ingredient.protein)
-            values.put("Energy", ingredient.energy)
-            values.put("Carbs", ingredient.carb)
-            values.put("Fat", ingredient.fat)
-
-            db.insert("Ingredient", null, values)
-        }
-
-        db.close()
-    }
-
-
 }
 

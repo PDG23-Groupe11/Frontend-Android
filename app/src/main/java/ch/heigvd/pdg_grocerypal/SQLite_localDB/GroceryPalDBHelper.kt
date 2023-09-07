@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
+import ch.heigvd.pdg_grocerypal.data.model.In_Shopping_List
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 import ch.heigvd.pdg_grocerypal.data.model.Unit
@@ -19,7 +20,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         )
         db.execSQL(
             "CREATE TABLE Ingredient( " +
-                    "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "ID INTEGER PRIMARY KEY," +
                     "Name TEXT," +
                     "Fiber FLOAT," +
                     "Protein FLOAT," +
@@ -135,6 +136,57 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.close()
 
         return groceryList
+    }
+
+    fun getAllInShoppingListItems(): MutableList<In_Shopping_List> {
+        val inShoppingList = mutableListOf<In_Shopping_List>()
+        val db = readableDatabase
+
+        val query = "SELECT * FROM In_Shopping_List"
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val idIndex = cursor.getColumnIndex("Ingredient_id")
+                val unitIdIndex = cursor.getColumnIndex("Unit_id")
+                val quantityIndex = cursor.getColumnIndex("Quantity")
+                val buyIndex = cursor.getColumnIndex("Buy")
+
+                val id = if (idIndex != -1) cursor.getInt(idIndex) else 0
+                val unitId = if (unitIdIndex != -1) cursor.getInt(unitIdIndex) else 0
+                val quantity = if (quantityIndex != -1) cursor.getInt(quantityIndex) else 0
+                val buy = if (buyIndex != -1) cursor.getInt(buyIndex) == 1 else false
+
+                val inShoppingListItem = In_Shopping_List(id, unitId, quantity, buy)
+                inShoppingList.add(inShoppingListItem)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+
+        return inShoppingList
+    }
+
+    fun areShoppingListsDifferent(remoteShoppingList: MutableList<In_Shopping_List>): Boolean {
+        val localShoppingList = getAllInShoppingListItems()
+
+        return localShoppingList != remoteShoppingList
+    }
+
+//    fun logShoppingList(shoppingList: List<In_Shopping_List>) {
+//        for (item in shoppingList) {
+//            Log.d("ShoppingList", "ID: ${item.id}, UnitID: ${item.unitId}, Quantity: ${item.quantity}, Buy: ${item.buy}")
+//        }
+//    }
+
+    fun clearShoppingList() {
+        val db = writableDatabase
+
+        // Delete all records from the In_Shopping_List table
+        db.delete("In_Shopping_List", null, null)
+
+        db.close()
     }
 
 
@@ -289,6 +341,41 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.close()
 
         return unitName
+    }
+
+    fun insertIngredients(ingredientsList: List<Ingredient>) {
+        val db = writableDatabase
+
+        for (ingredient in ingredientsList) {
+            val values = ContentValues()
+            values.put("ID", ingredient.id)
+            values.put("Name", ingredient.name)
+            values.put("Fiber", ingredient.fiber)
+            values.put("Protein", ingredient.protein)
+            values.put("Energy", ingredient.energy)
+            values.put("Carbs", ingredient.carb)
+            values.put("Fat", ingredient.fat)
+
+            db.insert("Ingredient", null, values)
+        }
+
+        db.close()
+    }
+
+    fun insertShoppingListItems(shoppingList: List<In_Shopping_List>) {
+        val db = writableDatabase
+
+        for (item in shoppingList) {
+            val values = ContentValues()
+            values.put("Ingredient_id", item.id)
+            values.put("Unit_id", item.unitId)
+            values.put("Quantity", item.quantity)
+            values.put("Buy", item.buy)
+
+            db.insert("In_Shopping_List", null, values)
+        }
+
+        db.close()
     }
 
 }

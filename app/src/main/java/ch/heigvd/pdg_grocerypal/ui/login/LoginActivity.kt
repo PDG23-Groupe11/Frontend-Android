@@ -1,139 +1,107 @@
 package ch.heigvd.pdg_grocerypal.ui.login
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.view.inputmethod.EditorInfo
+import android.util.Log
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
 import ch.heigvd.pdg_grocerypal.NavigationActivity
-import ch.heigvd.pdg_grocerypal.databinding.ActivityLoginBinding
-
 import ch.heigvd.pdg_grocerypal.R
+import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
+import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
+import ch.heigvd.pdg_grocerypal.data.model.Credentials
+import ch.heigvd.pdg_grocerypal.data.model.In_Shopping_List
+import ch.heigvd.pdg_grocerypal.data.model.TokenResponse
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var loginViewModel: LoginViewModel
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var shoppingList: MutableList<In_Shopping_List>
+    private lateinit var dbHelper: GroceryPalDBHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
 
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        val signInButton = findViewById<Button>(R.id.login)
+        val signUpButton = findViewById<Button>(R.id.sign_up)
+        val emailEditText = findViewById<EditText>(R.id.username)
+        val passwordEditText = findViewById<EditText>(R.id.password)
+        var credentials: Credentials
+        shoppingList = mutableListOf()
 
-        val username = binding.username
-        val password = binding.password
-        val login = binding.login
-        val loading = binding.loading
+        dbHelper = GroceryPalDBHelper(this)
 
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())[LoginViewModel::class.java]
+        // Initially, disable the "Login" button
+        signInButton.isEnabled = false
 
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-            val loginState = it ?: return@Observer
+        // Add text change listeners to the email and password fields
+        emailEditText.doAfterTextChanged { updateLoginButtonState() }
+        passwordEditText.doAfterTextChanged { updateLoginButtonState() }
 
-            // disable login button unless both username / password is valid
-            login.isEnabled = loginState.isDataValid
+        signInButton.setOnClickListener {
+            val email = emailEditText.text.toString()
+            val password = passwordEditText.text.toString()
+            credentials = Credentials(email, password)
 
-            if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
-            }
-            if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
-            }
-        })
+            // Check if email and password are not blank
+            if (email.isNotBlank() && password.isNotBlank()) {
+                // Attempt to log in
+                ConnectionRecipeUtils.login(
+                    credentials,
+                    onSuccess = { tokenResponse ->
+                        // Login successful, token is already saved in SharedPreferences
 
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
-            val loginResult = it ?: return@Observer
+                        val authToken = tokenResponse.token
+                        Log.d("AuthToken", "Received token: $authToken")
 
-            loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
-            }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
-            }
-            setResult(Activity.RESULT_OK)
+                        val tokenResponse = TokenResponse(authToken)
 
-            //Complete and destroy login activity once successful
-            finish()
-        })
+                        val sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.putString("auth_token", tokenResponse.token)
+                        editor.apply()
 
-        username.afterTextChanged {
-            loginViewModel.loginDataChanged(
-                username.text.toString(),
-                password.text.toString()
-            )
-        }
 
-        password.apply {
-            afterTextChanged {
-                loginViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
+                        // After successful login and API request, navigate to the main activity
+                        val intent = Intent(this, NavigationActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    },
+                    onError = { errorMessage ->
+                        // Handle login error (e.g., display error message)
+                        Log.e("Login", "Login error: $errorMessage")
+                    }
                 )
-            }
-
-            setOnEditorActionListener { _, actionId, _ ->
-                when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
-                        )
-                }
-                false
-            }
-
-            login.setOnClickListener {
-                loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+            } else {
+                // Handle case where email or password is blank (e.g., show an error message)
+                Toast.makeText(this, "Email and password are required.", Toast.LENGTH_SHORT).show()
+                Log.e("Login", "Email and password are required")
             }
         }
-    }
-
-    private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
-        // Display a toast message with welcome message
-        Toast.makeText(
-            applicationContext,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
-
-        // Start the new activity here
-        val intent = Intent(this, NavigationActivity::class.java)
-        startActivity(intent)
-
-        // Finish the LoginActivity to remove it from the back stack
-        finish()
-    }
 
 
-    private fun showLoginFailed(@StringRes errorString: Int) {
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
-    }
-}
 
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
+        signUpButton.setOnClickListener {
+            // Navigate to the SignUpActivity
+            val intent = Intent(this, ActivitySignUp::class.java)
+            startActivity(intent)
         }
+    }
+    private fun updateLoginButtonState() {
+        val emailEditText = findViewById<EditText>(R.id.username)
+        val passwordEditText = findViewById<EditText>(R.id.password)
+        val signInButton = findViewById<Button>(R.id.login)
 
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+        val email = emailEditText.text.toString()
+        val password = passwordEditText.text.toString()
 
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    })
+        // Enable the "Login" button if both email and password fields are not blank
+        signInButton.isEnabled = email.isNotBlank() && password.isNotBlank()
+    }
+
+
 }

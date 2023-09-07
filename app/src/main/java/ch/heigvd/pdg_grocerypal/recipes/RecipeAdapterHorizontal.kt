@@ -1,6 +1,5 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
-import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
+import com.squareup.picasso.Picasso
 
 
 class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
@@ -35,6 +34,8 @@ class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipeList[position]
+        val BASE_URL = "http://10.0.2.2:8080"
+        val urlString = BASE_URL + "/static/recipeImages/" + recipe.id.toString()
 
 
         holder.recipeImageView.setImageResource(R.drawable.image_placeholder)
@@ -48,6 +49,17 @@ class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
 
         val recipeDetailsFragment = RecipeDetailsFragment()
         recipeDetailsFragment.arguments = args
+
+        val imgWidth = holder.recipeImageView.layoutParams.width
+        val imgHeight = holder.recipeImageView.layoutParams.height
+
+
+        Picasso.get()
+            .load(urlString) // Replace imageUrl with the URL of the image
+            .placeholder(R.drawable.image_placeholder) // Optional: Set a placeholder drawable while the image is loading
+            .resize(imgWidth, imgHeight) // Optional: Resize the image to specific dimensions
+            .centerCrop() // Optional: Crop the image to fit the ImageView dimensions
+            .into(holder.recipeImageView) // Your ImageView
 
         holder.clickableOverlay.setOnClickListener {
 
