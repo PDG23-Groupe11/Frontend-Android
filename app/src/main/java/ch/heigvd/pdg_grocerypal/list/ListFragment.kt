@@ -77,7 +77,7 @@ class ListFragment : Fragment() {
         // Button qui permet de supprimer tout les ingrédients déjà achetés
         binding.deletePurchasedButton.setOnClickListener {
             val dbHelper = GroceryPalDBHelper(requireContext())
-            dbHelper.deleteAllPurchasedItems()
+            dbHelper.deleteAllPurchasedItems(requireActivity())
             updateGroceryList(dbHelper.getAllShoppingListItems())
             view.post {
                 adapter.notifyDataSetChanged()

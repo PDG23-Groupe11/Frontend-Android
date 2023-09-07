@@ -1,5 +1,6 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +34,28 @@ class RecipesFragment : Fragment() {
 
         ownRecipeList = mutableListOf()
 
+
+        // Access the activity's context to get SharedPreferences
+        val sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
+        // Now you can use sharedPreferences to read or write data
+        val authToken = sharedPreferences.getString("auth_token", null)
+
+        if (authToken != null) {
+
+            ConnectionRecipeUtils.fetchUserRecipes(authToken,
+                onSuccess = { personnalRecipes ->
+                    // Handle success, for example, update your adapter and UI here
+                    ownRecipeList.addAll(personnalRecipes)
+                    adapterOwnRecipe.notifyDataSetChanged()
+                },
+                onError = { errorMessage ->
+                    // Handle error, for example, show a Toast or log the error
+                    ConnectionRecipeUtils.showError(errorMessage)
+                }
+            )
+        }
+
         ConnectionRecipeUtils.fetchRecipes(recipeList1, 10,
             onSuccess = { updatedRecipeList ->
                 // Handle success, for example, update your adapter and UI here
@@ -44,8 +67,6 @@ class RecipesFragment : Fragment() {
                 ConnectionRecipeUtils.showError(errorMessage)
             }
         )
-
-
 
         adapter1 = RecipeAdapterHorizontal(recipeList1)
         binding.recyclerView1.adapter = adapter1

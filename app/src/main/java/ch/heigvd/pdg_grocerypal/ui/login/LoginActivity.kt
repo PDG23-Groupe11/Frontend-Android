@@ -3,6 +3,8 @@ package ch.heigvd.pdg_grocerypal.ui.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -64,6 +66,28 @@ class LoginActivity : AppCompatActivity() {
                         val editor = sharedPreferences.edit()
                         editor.putString("auth_token", tokenResponse.token)
                         editor.apply()
+
+                        ConnectionRecipeUtils.fetchUserInfos(
+                            authToken,
+                            onSuccess = { retreivedInfos ->
+                                // Login successful, token is already saved in SharedPreferences
+
+                                val usersInfo = retreivedInfos
+
+                                val sharedPreferencesUser = getSharedPreferences("UserDataPrefs", Context.MODE_PRIVATE)
+                                val editorUser = sharedPreferencesUser.edit()
+                                editorUser.putString("name", usersInfo.firstname)
+                                editorUser.putString("surname", usersInfo.name)
+                                editorUser.putInt("nbPerHome", usersInfo.nbPerHome)
+                                editorUser.putString("email", usersInfo.email)
+                                editorUser.apply()
+
+                            },
+                            onError = { errorMessage ->
+                                // Handle login error (e.g., display error message)
+                                Log.e("Login", "Login error: $errorMessage")
+                            }
+                        )
 
 
                         // After successful login and API request, navigate to the main activity

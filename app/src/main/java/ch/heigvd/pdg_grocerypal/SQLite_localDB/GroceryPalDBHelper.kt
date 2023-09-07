@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
+import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.data.model.In_Shopping_List
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient
@@ -138,7 +140,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         return groceryList
     }
 
-    fun getAllInShoppingListItems(): MutableList<In_Shopping_List> {
+    fun getAllInShoppingListItems(): List<In_Shopping_List> {
         val inShoppingList = mutableListOf<In_Shopping_List>()
         val db = readableDatabase
 
@@ -161,11 +163,13 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
                 inShoppingList.add(inShoppingListItem)
             } while (cursor.moveToNext())
         }
+        val returnShopping_List: List<In_Shopping_List>
+        returnShopping_List = inShoppingList
 
         cursor.close()
         db.close()
 
-        return inShoppingList
+        return returnShopping_List
     }
 
     fun areShoppingListsDifferent(remoteShoppingList: MutableList<In_Shopping_List>): Boolean {
@@ -199,12 +203,14 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.close()
     }
 
-    fun deleteAllPurchasedItems() {
+    fun deleteAllPurchasedItems(context: Context) {
         val db = writableDatabase
         val whereClause = "Buy = 1"
         db.delete("In_Shopping_List", whereClause, null)
 
         db.close()
+
+        ConnectionRecipeUtils.postShoppingListWithAuthToken(context)
     }
 
     fun updateItemPurchasedStatus(ingredientId: Int, unitId: Int, isPurchased: Boolean) {
@@ -287,7 +293,20 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         return unitList
     }
 
-    fun addOrUpdateShoppingListItem(ingredientId: Int, unitId: Int, quantity: Int) {
+    /**
+     * add the current shoppingList item to In_Shopping_List table and send it to online DB
+     */
+    fun addOrUpdateShoppingListItem(context: Context, ingredientId: Int, unitId: Int, quantity: Int) {
+
+        _addOrUpdateShoppingListItem(context, ingredientId, unitId, quantity)
+        ConnectionRecipeUtils.postShoppingListWithAuthToken(context)
+
+    }
+
+    /**
+     * add the current shoppingList item to In_Shopping_List table
+     */
+    private fun _addOrUpdateShoppingListItem(context: Context, ingredientId: Int, unitId: Int, quantity: Int) {
         val db = writableDatabase
 
         val whereClause = "Ingredient_id = ? AND Unit_id = ?"
@@ -314,15 +333,18 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
             db.insert("In_Shopping_List", null, contentValues)
         }
-
         cursor.close()
         db.close()
     }
 
-    fun addOrUpdateShoppingListItems(ingredients: List<Ingredient_Quantity>) {
+    /**
+     * add a full shopping list and send the local database to online DB
+     */
+    fun addOrUpdateShoppingListItems(context: Context,ingredients: List<Ingredient_Quantity>) {
         for (ingredient in ingredients) {
-            addOrUpdateShoppingListItem(ingredient.id, ingredient.unitId, ingredient.quantity)
+            _addOrUpdateShoppingListItem(context, ingredient.id, ingredient.unitId, ingredient.quantity)
         }
+        ConnectionRecipeUtils.postShoppingListWithAuthToken(context)
     }
 
 
@@ -346,20 +368,26 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     fun insertIngredients(ingredientsList: List<Ingredient>) {
         val db = writableDatabase
 
-        for (ingredient in ingredientsList) {
-            val values = ContentValues()
-            values.put("ID", ingredient.id)
-            values.put("Name", ingredient.name)
-            values.put("Fiber", ingredient.fiber)
-            values.put("Protein", ingredient.protein)
-            values.put("Energy", ingredient.energy)
-            values.put("Carbs", ingredient.carb)
-            values.put("Fat", ingredient.fat)
+        db.beginTransaction()
+        try {
+            for (ingredient in ingredientsList) {
+                val values = ContentValues()
+                values.put("ID", ingredient.id)
+                values.put("Name", ingredient.name)
+                values.put("Fiber", ingredient.fiber)
+                values.put("Protein", ingredient.protein)
+                values.put("Energy", ingredient.energy)
+                values.put("Carbs", ingredient.carb)
+                values.put("Fat", ingredient.fat)
 
-            db.insert("Ingredient", null, values)
+                // Insert with conflict resolution strategy
+                db.insertWithOnConflict("Ingredient", null, values, SQLiteDatabase.CONFLICT_REPLACE)
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+            db.close()
         }
-
-        db.close()
     }
 
     fun insertShoppingListItems(shoppingList: List<In_Shopping_List>) {

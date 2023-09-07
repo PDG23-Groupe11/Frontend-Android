@@ -1,6 +1,7 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -161,7 +162,7 @@ class RecipeDetailsFragment() : Fragment() {
         }
 
         binding.AjouterAListeButton.setOnClickListener {
-            showConfirmationDialog(ingredientQuantityList)
+            showConfirmationDialog(requireActivity(),ingredientQuantityList)
         }
 
 
@@ -196,7 +197,7 @@ class RecipeDetailsFragment() : Fragment() {
         return quantity * conversionFactor
     }
 
-    private fun showConfirmationDialog(ingredients: List<Ingredient_Quantity>) {
+    private fun showConfirmationDialog(context: Context, ingredients: List<Ingredient_Quantity>) {
         val alertDialogBuilder = AlertDialog.Builder(context)
         val dialogLayout = LayoutInflater.from(context).inflate(R.layout.popup_add_recipe_ingredients, null)
         val titleTextView = dialogLayout.findViewById<TextView>(R.id.titleTextView)
@@ -220,7 +221,7 @@ class RecipeDetailsFragment() : Fragment() {
         val alertDialog = alertDialogBuilder.create()
 
         addButton.setOnClickListener {
-            dbHelper?.addOrUpdateShoppingListItems(ingredients)
+            dbHelper?.addOrUpdateShoppingListItems(context, ingredients)
             Toast.makeText(context, "Ingrédients ajoutés à la liste", Toast.LENGTH_SHORT).show()
             alertDialog.dismiss()
         }

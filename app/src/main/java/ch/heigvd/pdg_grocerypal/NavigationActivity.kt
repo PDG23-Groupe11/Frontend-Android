@@ -50,9 +50,8 @@ class NavigationActivity : AppCompatActivity() {
         val authToken = sharedPreferences.getString("auth_token", "")
 
         if (authToken != null) {
-            val tokenResponse = TokenResponse(authToken)
             ConnectionRecipeUtils.fetchSchoppingList(
-                token = tokenResponse,
+                authToken,
                 onSuccess = { shoppingItems ->
                     shoppingList.addAll(shoppingItems)
                     // Check for differences and show synchronization dialog
@@ -114,9 +113,7 @@ class NavigationActivity : AppCompatActivity() {
     }
 
     private fun synchronizeFromLocalToRemote() {
-        // Implement synchronization logic from local to remote
-        // Update the remote database with local data
-        // Handle errors appropriately
+        ConnectionRecipeUtils.postShoppingListWithAuthToken(this)
     }
 
     private fun synchronizeFromRemoteToLocal(remoteShoppingList: List<In_Shopping_List>) {

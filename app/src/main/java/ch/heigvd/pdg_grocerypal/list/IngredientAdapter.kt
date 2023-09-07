@@ -68,7 +68,7 @@ class IngredientAdapter(private val context: Context, private val ingredientList
                         // Vérifie que l'unité sélectionnée existe
                         if (selectedUnit != null) {
                             // Ajout de l'ingrédient à la liste
-                            dbHelper.addOrUpdateShoppingListItem(ingredient.id, selectedUnit.id, selectedQuantity)
+                            dbHelper.addOrUpdateShoppingListItem(context, ingredient.id, selectedUnit.id, selectedQuantity)
                             Toast.makeText(context, "Ajout de $selectedQuantity ${selectedUnit.name} ${ingredient.name}", Toast.LENGTH_SHORT).show()
                         }
                         else {
