@@ -1,6 +1,5 @@
 package ch.heigvd.pdg_grocerypal.recipes
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,8 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
-import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
+import ch.heigvd.pdg_grocerypal.config.Configuration
+import com.squareup.picasso.Picasso
 
 
 class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
@@ -35,27 +35,32 @@ class RecipeAdapterHorizontal(private val recipeList: List<RecipeCard>) :
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipeList[position]
+        val BASE_URL = Configuration.BaseURL
+        val urlString = BASE_URL + "/static/recipeImages/" + recipe.id.toString()
 
-        val groceryList = mutableListOf(
-                GroceryItem(1, "Farine", "g", 100),
-                GroceryItem(2, "Lait", "l", 4),
-                GroceryItem(3, "Oeuf", "pcs", 6),
-                GroceryItem(4, "Chocolat noir", "g", 200),
-                GroceryItem(5, "Chocolat au lait", "g", 200)
-        )
 
         holder.recipeImageView.setImageResource(R.drawable.image_placeholder)
-        holder.recipeNameTv.text = recipe.recipeName
-        holder.recipeDurationTv.text = recipe.recipeDuration
+        holder.recipeNameTv.text = recipe.name
+        holder.recipeDurationTv.text = recipe.prep_time + " min"
 
         val args = Bundle().apply {
             putParcelable("recipe", recipe)
-            putParcelableArrayList("groceryList", ArrayList(groceryList))
             putInt("imagePlaceholder", R.drawable.image_placeholder)
         }
 
         val recipeDetailsFragment = RecipeDetailsFragment()
         recipeDetailsFragment.arguments = args
+
+        val imgWidth = holder.recipeImageView.layoutParams.width
+        val imgHeight = holder.recipeImageView.layoutParams.height
+
+
+        Picasso.get()
+            .load(urlString) // Replace imageUrl with the URL of the image
+            .placeholder(R.drawable.image_placeholder) // Optional: Set a placeholder drawable while the image is loading
+            .resize(imgWidth, imgHeight) // Optional: Resize the image to specific dimensions
+            .centerCrop() // Optional: Crop the image to fit the ImageView dimensions
+            .into(holder.recipeImageView) // Your ImageView
 
         holder.clickableOverlay.setOnClickListener {
 

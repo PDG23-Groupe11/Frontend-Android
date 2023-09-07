@@ -1,23 +1,20 @@
 package ch.heigvd.pdg_grocerypal.list
 
 import android.content.Context
-import android.graphics.Paint
-import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
-import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import androidx.fragment.app.FragmentManager
 import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
-import com.google.android.material.bottomsheet.BottomSheetDialog
 
+/**
+ * Adapter permettant d'afficher tout les ingrédients de la liste de courses
+ */
 class GroceryListAdapter(private val context: Context, private val groceryList: MutableList<GroceryItem>, private val fragmentManager: FragmentManager) :
     RecyclerView.Adapter<GroceryListAdapter.ViewHolder>() {
 
@@ -33,16 +30,20 @@ class GroceryListAdapter(private val context: Context, private val groceryList: 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+        // Récpère et affiche l'ingrédient
         val groceryItem = groceryList[position]
         holder.itemDetails.text = "${groceryItem.quantity} ${groceryItem.unit} ${groceryItem.name}"
         holder.checkBox.isChecked = groceryItem.isPurchased
 
+        // Modification de l'ingrédient s'il est acheté ou non
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
             val dbHelper = GroceryPalDBHelper(context)
-            dbHelper.updateItemPurchasedStatus(groceryItem.ingredientId, isChecked)
+            dbHelper.updateItemPurchasedStatus(groceryItem.ingredientId, groceryItem.unitId, isChecked)
             updateGroceryList(dbHelper.getAllShoppingListItems())
         }
 
+        // Permet l'ouverture de BottomSheetListFragment
         holder.itemDetails.setOnClickListener {
             val bottomSheetListFragment = BottomSheetListFragment(groceryList, position, this@GroceryListAdapter)
             bottomSheetListFragment.show(fragmentManager, bottomSheetListFragment.tag)
@@ -50,6 +51,9 @@ class GroceryListAdapter(private val context: Context, private val groceryList: 
     }
     override fun getItemCount() = groceryList.size
 
+    /**
+     * Mise à jour de la liste de courses
+     */
     fun updateGroceryList(newGroceryList: MutableList<GroceryItem>) {
         groceryList.clear()
         groceryList.addAll(newGroceryList)

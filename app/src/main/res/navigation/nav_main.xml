@@ -45,5 +45,9 @@
             android:id="@+id/returnToRecipeView"
             app:destination="@id/recipesFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/addIngredientFragment"
+        android:name="ch.heigvd.pdg_grocerypal.list.AddIngredientFragment"
+        android:label="AddIngredientFragment" />
 
 </navigation>
