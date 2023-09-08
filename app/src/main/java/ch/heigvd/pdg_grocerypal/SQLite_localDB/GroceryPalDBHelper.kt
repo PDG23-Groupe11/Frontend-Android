@@ -18,7 +18,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             "CREATE TABLE Unit ( " +
-                    "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "ID INTEGER PRIMARY KEY," +
                     "Name TEXT );"
         )
         db.execSQL(
@@ -50,15 +50,15 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
     private fun insertDefaultUnits(db: SQLiteDatabase) {
         val unitValues = arrayOf(
-            "('g')",
-            "('ml')",
-            "('pcs')",
-            "('c.à.c')",
-            "('c.à.s')"
+            Pair(1, "g"),
+            Pair(2, "ml"),
+            Pair(3, "pcs"),
+            Pair(4, "c.à.c"),
+            Pair(5, "c.à.s")
         )
 
-        unitValues.forEach { value ->
-            db.execSQL("INSERT INTO Unit (Name) VALUES $value")
+        unitValues.forEach { (id, name) ->
+            db.execSQL("INSERT INTO Unit (ID, Name) VALUES ($id, '$name')")
         }
     }
     private fun insertDefaultIngredients(db: SQLiteDatabase) {
