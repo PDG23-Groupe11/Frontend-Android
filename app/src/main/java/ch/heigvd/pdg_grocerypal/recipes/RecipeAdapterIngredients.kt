@@ -9,7 +9,9 @@ import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 
-
+/**
+ * Adaptateur personnalisé pour afficher une liste d'ingrédients d'une recette dans un RecyclerView.
+ */
 class RecipeAdapterIngredients(private val ingredientQuantityList: List<Ingredient_Quantity>, private var currentQuantity: Int) :
     RecyclerView.Adapter<RecipeAdapterIngredients.RecipeViewHolder>(){
 
@@ -26,7 +28,7 @@ class RecipeAdapterIngredients(private val ingredientQuantityList: List<Ingredie
         val ingredient = ingredientQuantityList[position]
         val totalQuantity = ingredient.quantity * currentQuantity
 
-        // Get the unit name based on the unitId using the dbHelper instance
+        // Obtient le nom de l'unité à travers la base de donnée locale
         val dbHelper = GroceryPalDBHelper(holder.itemView.context)
         val unitName = dbHelper.getUnitName(ingredient.unitId)
 

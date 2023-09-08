@@ -7,7 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.pdg_grocerypal.R
 
-
+/**
+ * Adaptateur personnalisé pour afficher une liste de régimes spéciaux dans un RecyclerView.
+ */
 class SpecialDietAdapter() :
     RecyclerView.Adapter<SpecialDietAdapter.ViewHolder>() {
     val specialDietList = listOf("vegan", "sans gluten")

@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
 import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
 import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 import ch.heigvd.pdg_grocerypal.data.model.In_Shopping_List
@@ -12,12 +11,14 @@ import ch.heigvd.pdg_grocerypal.data.model.Ingredient
 import ch.heigvd.pdg_grocerypal.data.model.Ingredient_Quantity
 import ch.heigvd.pdg_grocerypal.data.model.Unit
 
-
+/**
+ * Cette classe gère la base de données locale de l'application.
+ */
 class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryPalLocalDB",null, 1) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             "CREATE TABLE Unit ( " +
-                    "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "ID INTEGER PRIMARY KEY," +
                     "Name TEXT );"
         )
         db.execSQL(
@@ -38,7 +39,6 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
                     "Buy BOOLEAN DEFAULT 0 NOT NULL );"
         )
 
-        // A SUPPRIMER quand relié à la DB distante
         insertDefaultUnits(db)
         // insertDefaultIngredients(db)
         //insertDefaultShoppingList(db)
@@ -50,15 +50,15 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
     private fun insertDefaultUnits(db: SQLiteDatabase) {
         val unitValues = arrayOf(
-            "('g')",
-            "('ml')",
-            "('pcs')",
-            "('c.à.c')",
-            "('c.à.s')"
+            Pair(1, "g"),
+            Pair(2, "ml"),
+            Pair(3, "pcs"),
+            Pair(4, "c.à.c"),
+            Pair(5, "c.à.s")
         )
 
-        unitValues.forEach { value ->
-            db.execSQL("INSERT INTO Unit (Name) VALUES $value")
+        unitValues.forEach { (id, name) ->
+            db.execSQL("INSERT INTO Unit (ID, Name) VALUES ($id, '$name')")
         }
     }
     private fun insertDefaultIngredients(db: SQLiteDatabase) {
@@ -87,6 +87,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
 
     }
 
+    /**
+     * Récupère tous les éléments de la liste de courses.
+     */
     fun getAllShoppingListItems(): MutableList<GroceryItem> {
         val groceryList = mutableListOf<GroceryItem>()
 
@@ -140,6 +143,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         return groceryList
     }
 
+    /**
+     * Récupère tous les éléments de la liste de courses.
+     */
     fun getAllInShoppingListItems(): List<In_Shopping_List> {
         val inShoppingList = mutableListOf<In_Shopping_List>()
         val db = readableDatabase
@@ -172,18 +178,19 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         return returnShopping_List
     }
 
+    /**
+     * Vérifie si les listes de courses locale et distante sont différentes.
+     */
     fun areShoppingListsDifferent(remoteShoppingList: MutableList<In_Shopping_List>): Boolean {
         val localShoppingList = getAllInShoppingListItems()
 
         return localShoppingList != remoteShoppingList
     }
 
-//    fun logShoppingList(shoppingList: List<In_Shopping_List>) {
-//        for (item in shoppingList) {
-//            Log.d("ShoppingList", "ID: ${item.id}, UnitID: ${item.unitId}, Quantity: ${item.quantity}, Buy: ${item.buy}")
-//        }
-//    }
 
+    /**
+     * Efface la liste de courses locale.
+     */
     fun clearShoppingList() {
         val db = writableDatabase
 
@@ -193,7 +200,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.close()
     }
 
-
+    /**
+     * Supprime un élément acheté de la liste de courses.
+     */
     fun deletePurchasedItem(ingredientId: Int, unitId: Int) {
         val db = writableDatabase
         val whereClause = "Ingredient_id = ? AND Unit_id = ?"
@@ -203,6 +212,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.close()
     }
 
+    /**
+     * Supprime tous les éléments achetés de la liste de courses locale et envoie la mise à jour à la base de données en ligne.
+     */
     fun deleteAllPurchasedItems(context: Context) {
         val db = writableDatabase
         val whereClause = "Buy = 1"
@@ -213,6 +225,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         ConnectionRecipeUtils.postShoppingListWithAuthToken(context)
     }
 
+    /**
+     * Met à jour le statut d'achat d'un élément de la liste de courses.
+     */
     fun updateItemPurchasedStatus(ingredientId: Int, unitId: Int, isPurchased: Boolean) {
         val db = writableDatabase
         val whereClause = "Ingredient_id = ? AND Unit_id = ?"
@@ -223,6 +238,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.close()
     }
 
+    /**
+     * Met à jour la quantité dans la liste de courses.
+     */
     fun updateQuantityInShoppingList(ingredientId: Int, unitId: Int, newQuantity: Int) {
         val db = writableDatabase
         val whereClause = "Ingredient_id = ? AND Unit_id = ?"
@@ -233,7 +251,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         db.close()
     }
 
-
+    /**
+     * Récupère tous les ingrédients de la base de données locale.
+     */
     fun getAllIngredients(): MutableList<Ingredient> {
         val ingredients = mutableListOf<Ingredient>()
         val db = readableDatabase
@@ -268,6 +288,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         return ingredients
     }
 
+    /**
+     * Récupère toutes les unités de la base de données locale.
+     */
     fun getAllUnits(): MutableList<Unit> {
         val unitList = mutableListOf<Unit>()
         val db = readableDatabase
@@ -294,7 +317,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     }
 
     /**
-     * add the current shoppingList item to In_Shopping_List table and send it to online DB
+     * Ajoute l'élément actuel de la liste de courses à la table In_Shopping_List et l'envoie à la base de données en ligne.
      */
     fun addOrUpdateShoppingListItem(context: Context, ingredientId: Int, unitId: Int, quantity: Int) {
 
@@ -304,7 +327,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     }
 
     /**
-     * add the current shoppingList item to In_Shopping_List table
+     * Ajoute l'élément actuel de la liste de courses à la table In_Shopping_List.
      */
     private fun _addOrUpdateShoppingListItem(context: Context, ingredientId: Int, unitId: Int, quantity: Int) {
         val db = writableDatabase
@@ -338,7 +361,7 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
     }
 
     /**
-     * add a full shopping list and send the local database to online DB
+     * Ajoute une liste de courses complète et envoie la base de données locale à la base de données en ligne.
      */
     fun addOrUpdateShoppingListItems(context: Context,ingredients: List<Ingredient_Quantity>) {
         for (ingredient in ingredients) {
@@ -347,7 +370,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         ConnectionRecipeUtils.postShoppingListWithAuthToken(context)
     }
 
-
+    /**
+     * Récupère le nom de l'unité en fonction de l'ID de l'unité.
+     */
     fun getUnitName(unitId: Int): String {
         val db = readableDatabase
         val query = "SELECT Name FROM Unit WHERE ID = ?"
@@ -365,6 +390,9 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         return unitName
     }
 
+    /**
+     * Insère des ingrédients dans la base de données locale.
+     */
     fun insertIngredients(ingredientsList: List<Ingredient>) {
         val db = writableDatabase
 
@@ -390,6 +418,10 @@ class GroceryPalDBHelper(context: Context) : SQLiteOpenHelper(context, "GroceryP
         }
     }
 
+
+    /**
+     * Insère des éléments de la liste de courses dans la base de données locale.
+     */
     fun insertShoppingListItems(shoppingList: List<In_Shopping_List>) {
         val db = writableDatabase
 

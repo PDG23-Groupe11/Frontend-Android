@@ -14,60 +14,56 @@ import ch.heigvd.pdg_grocerypal.data.model.UserInfos
 import ch.heigvd.pdg_grocerypal.databinding.ActivityMainBinding
 import ch.heigvd.pdg_grocerypal.ui.login.LoginActivity
 
+/**
+ * L'activité principale de l'application.
+ */
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Obtient les préférences partagées de l'application
         val sharedPreferencesApp = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
+        // Obtient le token d'authentification depuis les préférences partagées
         val authToken = sharedPreferencesApp.getString("auth_token", null)
 
         var usersInfo: UserInfos
 
         if (authToken != null) {
-            // After successful login and API request, navigate to the main activity
+
             binding.button.visibility = View.GONE
 
-
+            // Récupère les informations de l'utilisateur depuis une API
             ConnectionRecipeUtils.fetchUserInfos(
                 authToken,
-                onSuccess = { retreivedInfos ->
-                    // Login successful, token is already saved in SharedPreferences
-
-                    usersInfo = retreivedInfos
-
+                onSuccess = { retrievedInfos ->
+                    usersInfo = retrievedInfos
                     val surname = usersInfo.name
-
-                    // Display a welcome toast message
-                    Toast.makeText(this, "Welcome $surname!", Toast.LENGTH_SHORT).show()
-
-                    // Delay for 2 seconds before moving to NavigationActivity
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        val intent = Intent(this, NavigationActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }, 2000)
-
+                    Toast.makeText(this, "Bienvenue $surname !", Toast.LENGTH_SHORT).show()
                 },
                 onError = { errorMessage ->
-                    Log.e("MainAcivity", "User info fetch error: $errorMessage")
+                    Log.e("MainAcivity", "Erreur : $errorMessage")
                 }
             )
-        } else {
 
-            Log.e("MainActivity", "Empty token retrieved")
+            Handler(Looper.getMainLooper()).postDelayed({
+                val intent = Intent(this, NavigationActivity::class.java)
+                startActivity(intent)
+                finish()
+            }, 2000)
+
+        } else {
+            Log.e("MainActivity", "Aucun token trouvé")
         }
 
-
-        // Add a button click listener to open the LoginActivity
+        // Bouton permettant de naviguer vers la page de login
         binding.button.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
     }
 }
-

@@ -4,18 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.heigvd.pdg_grocerypal.MainActivity
-import ch.heigvd.pdg_grocerypal.NavigationActivity
 import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
 import ch.heigvd.pdg_grocerypal.data.model.UserInfos
 import ch.heigvd.pdg_grocerypal.databinding.FragmentProfilBinding
-import ch.heigvd.pdg_grocerypal.recipes.RecipeAdapterVertical
 
+/**
+ * Fragment représentant le profil de l'utilisateur.
+ */
 class ProfilFragment : Fragment() {
 
     private lateinit var binding: FragmentProfilBinding
@@ -32,6 +33,7 @@ class ProfilFragment : Fragment() {
         binding.recyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
+        // Récupération des informations de l'utilisateur depuis le stockage local
         var userInfos = retrieveLocalUserInfos(requireContext())
         var currentQuantity = 1
 
@@ -40,13 +42,15 @@ class ProfilFragment : Fragment() {
         }
         binding.quantityEditText.setText((currentQuantity).toString())
 
-
+        // Gestion du bouton de déconnexion
         binding.logoutButton.setOnClickListener {
+            // Suppression du jeton d'authentification
             val sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
             val editor = sharedPreferences.edit()
-            editor.putString("auth_token", null)  // Set the value to null
+            editor.putString("auth_token", null)
             editor.apply()
 
+            // Réinitialisation des données utilisateur
             val sharedPreferencesUser = requireActivity().getSharedPreferences("UserDataPrefs", Context.MODE_PRIVATE)
             val editorUser = sharedPreferencesUser.edit()
             editorUser.putString("name", null)
@@ -55,6 +59,7 @@ class ProfilFragment : Fragment() {
             editorUser.putString("email", null)
             editorUser.apply()
 
+            // Redirection vers l'écran d'accueil
             val intent = Intent(requireContext(), MainActivity::class.java)
             startActivity(intent)
         }
@@ -88,6 +93,9 @@ class ProfilFragment : Fragment() {
     }
 }
 
+/**
+ * Fonction pour récupérer les informations de l'utilisateur depuis le stockage local.
+ */
 fun retrieveLocalUserInfos(context: Context): UserInfos? {
     val sharedPreferences = context.getSharedPreferences("UserDataPrefs", Context.MODE_PRIVATE)
 
@@ -108,6 +116,9 @@ fun retrieveLocalUserInfos(context: Context): UserInfos? {
     return null
 }
 
+/**
+ * Fonction pour mettre à jour les informations de l'utilisateur.
+ */
 fun updateUserInfos(userInfos: UserInfos, currentQuantity: Int, context: Context) {
 
     val sharedPreferencesUser = context.getSharedPreferences("UserDataPrefs", Context.MODE_PRIVATE)
@@ -132,7 +143,3 @@ fun updateUserInfos(userInfos: UserInfos, currentQuantity: Int, context: Context
         )
     }
 }
-
-
-
-

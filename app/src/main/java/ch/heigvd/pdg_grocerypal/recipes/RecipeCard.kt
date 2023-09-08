@@ -2,8 +2,10 @@ package ch.heigvd.pdg_grocerypal.recipes
 
 import android.os.Parcel
 import android.os.Parcelable
-import ch.heigvd.pdg_grocerypal.data.model.GroceryItem
 
+/**
+ * Représente une carte de recette contenant des informations sur une recette.
+ */
 data class RecipeCard(
         val id: Int,
         val name: String,

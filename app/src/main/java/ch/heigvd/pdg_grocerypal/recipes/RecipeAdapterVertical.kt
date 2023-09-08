@@ -13,7 +13,9 @@ import ch.heigvd.pdg_grocerypal.R
 import ch.heigvd.pdg_grocerypal.config.Configuration
 import com.squareup.picasso.Picasso
 
-
+/**
+ * Adapter personnalisé pour afficher une liste de recettes verticalement dans un RecyclerView.
+ */
 class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
     RecyclerView.Adapter<RecipeAdapterVertical.RecipeViewHolder>(){
 
@@ -31,6 +33,7 @@ class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipeList[position]
+        // Url pour la récupération des images
         val BASE_URL = Configuration.BaseURL
         val urlString = BASE_URL + "/static/recipeImages/" + recipe.id.toString()
 
@@ -48,16 +51,13 @@ class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
         val imgWidth = holder.recipeImageView.layoutParams.width
         val imgHeight = holder.recipeImageView.layoutParams.height
 
-
+        // Tente de récupérer l'image de la recette sur la back-end si existante
         Picasso.get()
-            .load(urlString) // Replace imageUrl with the URL of the image
-            .placeholder(R.drawable.image_placeholder) // Optional: Set a placeholder drawable while the image is loading
-            .resize(imgWidth, imgHeight) // Optional: Resize the image to specific dimensions
-            .centerCrop() // Optional: Crop the image to fit the ImageView dimensions
-            .into(holder.recipeImageView) // Your ImageView
-
-
-
+            .load(urlString)
+            .placeholder(R.drawable.image_placeholder)
+            .resize(imgWidth, imgHeight)
+            .centerCrop()
+            .into(holder.recipeImageView)
 
 
         val recipeDetailsFragment = RecipeDetailsFragment()
@@ -65,10 +65,8 @@ class RecipeAdapterVertical(private val recipeList: List<RecipeCard>) :
 
         holder.clickableOverlay.setOnClickListener {
 
-
             val navController = Navigation.findNavController(holder.itemView)
             navController.popBackStack()
-            // set bottom navigation view manually to recipe
             navController.navigate(R.id.recipesFragment)
             navController.navigate(R.id.recipeDetailsFragment, args)
         }
