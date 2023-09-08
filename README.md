@@ -5,8 +5,6 @@ De plus, elle offre la possibilité de gérer le contenu en mode hors ligne ou d
 
 ## Instruction pour faire tourner le projet Frontend en local :
 
-notre repo github FrontEnd : https://github.com/PDG23-Groupe11/Frontend-Android
-
 ### Avec l'APK
 
 Vous pouvez télécharger et installer l'APK se trouvant dans notre repo github, l'APK utilisable est téléchargeable dans la dernière release.
