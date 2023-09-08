@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ch.heigvd.pdg_grocerypal.backEndConnections.ConnectionRecipeUtils
 import ch.heigvd.pdg_grocerypal.databinding.FragmentRecipesBinding
 
-
+/**
+ * Fragment qui affiche une liste de recettes.
+ */
 class RecipesFragment : Fragment() {
 
     private lateinit var binding: FragmentRecipesBinding
@@ -27,43 +29,38 @@ class RecipesFragment : Fragment() {
         binding = FragmentRecipesBinding.inflate(inflater, container, false)
         val view = binding.root
 
-
-
         recipeList1 = mutableListOf()
 
 
         ownRecipeList = mutableListOf()
 
 
-        // Access the activity's context to get SharedPreferences
+        // Accéder au contexte de l'activité pour obtenir les préférences partagées
         val sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
 
-        // Now you can use sharedPreferences to read or write data
+        // Lecture du jeton d'authentification depuis les préférences partagées
         val authToken = sharedPreferences.getString("auth_token", null)
 
         if (authToken != null) {
-
+            // Récupération des recettes personnelles de l'utilisateur
             ConnectionRecipeUtils.fetchUserRecipes(authToken,
                 onSuccess = { personnalRecipes ->
-                    // Handle success, for example, update your adapter and UI here
                     ownRecipeList.addAll(personnalRecipes)
                     adapterOwnRecipe.notifyDataSetChanged()
                 },
                 onError = { errorMessage ->
-                    // Handle error, for example, show a Toast or log the error
                     ConnectionRecipeUtils.showError(errorMessage)
                 }
             )
         }
 
+        // Récupération des recettes publiques de l'application
         ConnectionRecipeUtils.fetchRecipes(recipeList1, 10,
             onSuccess = { updatedRecipeList ->
-                // Handle success, for example, update your adapter and UI here
                 adapter1.notifyDataSetChanged()
                 adapter2.notifyDataSetChanged()
             },
             onError = { errorMessage ->
-                // Handle error, for example, show a Toast or log the error
                 ConnectionRecipeUtils.showError(errorMessage)
             }
         )

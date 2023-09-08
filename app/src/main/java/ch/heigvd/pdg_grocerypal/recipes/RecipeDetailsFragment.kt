@@ -3,7 +3,6 @@ package ch.heigvd.pdg_grocerypal.recipes
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,13 +22,16 @@ import ch.heigvd.pdg_grocerypal.SQLite_localDB.GroceryPalDBHelper
 import ch.heigvd.pdg_grocerypal.config.Configuration
 import com.squareup.picasso.Picasso
 
-
+/**
+ * Fragment qui affiche les détails d'une recette, y compris les ingrédients et les informations nutritionnelles.
+ */
 class RecipeDetailsFragment() : Fragment() {
 
     private lateinit var ingredientQuantityList: MutableList<Ingredient_Quantity>
     private lateinit var binding: FragmentDetailRecipeBinding
     private lateinit var adapter: RecipeAdapterIngredients
-    private var currentQuantity = 1
+    val sharedPreferences = context?.getSharedPreferences("UserDataPrefs", Context.MODE_PRIVATE)
+    private var currentQuantity = sharedPreferences?.getInt("nbPerHome", 1)?:1
 
 
     var totalFiber = 0.0f
@@ -49,12 +51,12 @@ class RecipeDetailsFragment() : Fragment() {
         val bundle = arguments
 
         if (bundle != null) {
+            // Récupération de l'image de la recette depuis les arguments
             val recipePlaceHolderImage = bundle.getInt("imagePlaceholder")?: R.drawable.image_placeholder
-
             binding.recipeImage.setImageResource(recipePlaceHolderImage)
 
         }
-
+        // Récupération de la recette actuelle depuis les arguments
         val recipe = arguments?.getParcelable<RecipeCard>("recipe")
 
         val BASE_URL = Configuration.BaseURL
@@ -70,17 +72,19 @@ class RecipeDetailsFragment() : Fragment() {
         val imgWidth = binding.recipeImage.layoutParams.width
         val imgHeight = binding.recipeImage.layoutParams.height
 
-
+        // Récupération de l'image liée à la recette
         Picasso.get()
-            .load(urlString) // Replace imageUrl with the URL of the image
-            .placeholder(R.drawable.image_placeholder) // Optional: Set a placeholder drawable while the image is loading
-            .resize(imgWidth, imgHeight) // Optional: Resize the image to specific dimensions
-            .centerCrop() // Optional: Crop the image to fit the ImageView dimensions
-            .into(binding.recipeImage) // Your ImageView
+            .load(urlString)
+            .placeholder(R.drawable.image_placeholder)
+            .resize(imgWidth, imgHeight)
+            .centerCrop()
+            .into(binding.recipeImage)
 
 
         if (recipe != null) {
             val recipeIdString = recipe.id.toString()
+
+            // Récupération des ingrédients de la recette depuis la base de données distante
             ConnectionRecipeUtils.fetchIngredientsForRecipe(
                 recipeIdString,
                 onSuccess = { ingredientsList ->
@@ -88,13 +92,13 @@ class RecipeDetailsFragment() : Fragment() {
 
                     for (ingredient in ingredientsList) {
 
-                        // Convert quantity to grams
+                        // Conversion de la quantité en grammes
                         val quantityInGrams = convertToGrams(ingredient.unitId, ingredient.quantity)
 
-                        // Calculate the contribution of this ingredient to the total
+                        // Calcul de la contribution de cet ingrédient aux valeurs nutritionnelles totales
                         val contributionFactor = quantityInGrams / 100.0f
 
-                        // Add the contribution to the total nutritional values
+                        // Ajout de la contribution aux valeurs nutritionnelles totales
                         totalFiber += ingredient.fiber * contributionFactor
                         totalProtein += ingredient.protein * contributionFactor
                         totalEnergy += (ingredient.energy * contributionFactor).toInt()
@@ -103,7 +107,6 @@ class RecipeDetailsFragment() : Fragment() {
 
                     }
 
-                    // Format the total nutritional values as strings
                     val formattedFiber = String.format("Fiber: %.1f g", totalFiber)
                     val formattedProtein = String.format("Protein: %.1f g", totalProtein)
                     val formattedEnergy = String.format("Energy: %d kcal", totalEnergy)
@@ -136,6 +139,7 @@ class RecipeDetailsFragment() : Fragment() {
             binding.recipePreparationText.text = formattedInstruction
         }
 
+
         binding.MinusButtonRecipe.setOnClickListener {
             if (currentQuantity > 1) {
                 currentQuantity--
@@ -160,8 +164,7 @@ class RecipeDetailsFragment() : Fragment() {
         adapter = RecipeAdapterIngredients(ingredientQuantityList, currentQuantity)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        // TODO lier a la quantité profil
-        binding.quantityEditText.setText("1")
+        binding.quantityEditText.setText(currentQuantity.toString())
 
         val returnButton = view.findViewById<ImageView>(R.id.blackArrowReturn)
 
@@ -173,6 +176,9 @@ class RecipeDetailsFragment() : Fragment() {
         return view
     }
 
+    /**
+     * Conversion de la quantité en grammes
+     */
     private fun convertToGrams(unitId: Int, quantity: Int): Float {
 
         val unitToGrams = mapOf(
@@ -188,6 +194,10 @@ class RecipeDetailsFragment() : Fragment() {
         return quantity * conversionFactor
     }
 
+    /**
+     * Méthode pour afficher et gérer une boîte de dialogue de confirmation lors d'ajout des ingrédients
+     * à la liste d'achat
+     */
     private fun showConfirmationDialog(context: Context, ingredients: List<Ingredient_Quantity>) {
         val alertDialogBuilder = AlertDialog.Builder(context)
         val dialogLayout = LayoutInflater.from(context).inflate(R.layout.popup_add_recipe_ingredients, null)
